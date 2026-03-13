@@ -1,4 +1,5 @@
-import { fixupConfigRules, FlatCompat } from "@eslint/compat";
+import { fixupConfigRules } from "@eslint/compat";
+import { FlatCompat } from "@eslint/eslintrc";
 import reactCompiler from "eslint-plugin-react-compiler";
 import sortKeysFix from "eslint-plugin-sort-keys-fix";
 import path from "node:path";
