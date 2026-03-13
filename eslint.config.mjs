@@ -1,7 +1,6 @@
 import { fixupConfigRules, FlatCompat } from "@eslint/compat";
 import reactCompiler from "eslint-plugin-react-compiler";
 import sortKeysFix from "eslint-plugin-sort-keys-fix";
-import tsParser from "@typescript-eslint/parser";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import globals from "globals";
@@ -41,7 +40,7 @@ const eslintConfig = [
       globals: {
         ...globals.browser,
       },
-      parser: tsParser,
+      parser: tseslint.parser,
       parserOptions: {
         ecmaFeatures: {
           jsx: true,
