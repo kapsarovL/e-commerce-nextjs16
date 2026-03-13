@@ -1,5 +1,4 @@
-import { fixupConfigRules, fixupPluginRules } from "@eslint/compat";
-import autofix from "eslint-plugin-autofix";
+import { fixupConfigRules, fixupPluginRules, FlatCompat } from "@eslint/compat";
 import reactCompiler from "eslint-plugin-react-compiler";
 import reactHooks from "eslint-plugin-react-hooks";
 import sortKeysFix from "eslint-plugin-sort-keys-fix";
@@ -7,9 +6,8 @@ import tsParser from "@typescript-eslint/parser";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import globals from "globals";
-import compat from "@eslint/compat";
 import js from "@eslint/js";
-import { FlatCompat } from "@eslint/eslintrc";
+import tseslint from "typescript-eslint";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -20,11 +18,7 @@ const compat = new FlatCompat({
 });
 
 const eslintConfig = [
-    { files: ["**/*.{js,mjs,cjs,ts,mts,cts,jsx,tsx}"], plugins: { js }, extends: ["js/recommended"], languageOptions: { globals: globals.browser } },
-  tseslint.configs.recommended,
-    pluginReact.configs.flat.recommended,
   {
-    
     ignores: [
       "node_modules/**",
       ".next/**",
@@ -33,20 +27,13 @@ const eslintConfig = [
       "next-env.d.ts",
     ],
   },
-  {
-    ignores: ["**/next-env.d.ts"],
-  },
+  js.configs.recommended,
+  ...tseslint.configs.recommended,
   ...fixupConfigRules(
     compat.extends(
-      "eslint:recommended",
       "eslint-config-prettier",
-      "plugin:react/recommended",
-      "plugin:@typescript-eslint/recommended",
-      "plugin:import/recommended",
-      "plugin:jsx-a11y/recommended",
       "next",
       "next/core-web-vitals",
-      "prettier",
     ),
   ),
   {
@@ -64,7 +51,6 @@ const eslintConfig = [
       },
     },
     plugins: {
-      autofix,
       "react-compiler": reactCompiler,
       "react-hooks": fixupPluginRules(reactHooks),
       "sort-keys-fix": sortKeysFix,
