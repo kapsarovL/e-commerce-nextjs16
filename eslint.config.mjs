@@ -1,6 +1,5 @@
-import { fixupConfigRules, fixupPluginRules, FlatCompat } from "@eslint/compat";
+import { fixupConfigRules, FlatCompat } from "@eslint/compat";
 import reactCompiler from "eslint-plugin-react-compiler";
-import reactHooks from "eslint-plugin-react-hooks";
 import sortKeysFix from "eslint-plugin-sort-keys-fix";
 import tsParser from "@typescript-eslint/parser";
 import path from "node:path";
@@ -52,7 +51,6 @@ const eslintConfig = [
     },
     plugins: {
       "react-compiler": reactCompiler,
-      "react-hooks": fixupPluginRules(reactHooks),
       "sort-keys-fix": sortKeysFix,
     },
     rules: {
