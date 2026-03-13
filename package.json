@@ -17,7 +17,7 @@
     "db:migrate": "drizzle-kit migrate",
     "db:studio": "drizzle-kit studio",
     "test": "vitest",
-    "prepare": "husky"
+    "prepare": "node --eval \"if (!process.env.CI) require('node:child_process').execSync('husky', {stdio:'inherit'});\""
   },
   "dependencies": {
     "@clerk/nextjs": "^7.0.4",
