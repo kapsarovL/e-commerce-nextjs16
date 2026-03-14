@@ -4,10 +4,10 @@
 
 Only the latest release on `main` receives security updates.
 
-| Branch  | Supported |
-| ------- | --------- |
-| `main`  | yes       |
-| others  | no        |
+| Branch | Supported |
+| ------ | --------- |
+| `main` | yes       |
+| others | no        |
 
 ## Reporting a Vulnerability
 
