@@ -1,7 +1,7 @@
 'use client';
 
 import { useCartItems, useCartSubtotal, useCartActions, useCartItemCount } from '@/store/cart';
-import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetFooter } from '@/components/ui/sheet';
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription, SheetFooter } from '@/components/ui/sheet';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -23,8 +23,9 @@ export function CartDrawer({ open, onClose }: CartDrawerProps) {
 
   return (
     <Sheet open={open} onOpenChange={o => !o && onClose()}>
-      <SheetContent className="flex w-full flex-col p-0 sm:max-w-md">
+      <SheetContent className="flex w-full flex-col p-0 sm:max-w-md" aria-describedby={undefined}>
         <SheetHeader className="border-b px-6 pt-6 pb-4">
+          <SheetDescription className="sr-only">Your shopping cart items</SheetDescription>
           <SheetTitle className="flex items-center gap-2 text-base font-semibold">
             <ShoppingBag className="h-4 w-4" />
             Cart

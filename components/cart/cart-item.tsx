@@ -56,7 +56,7 @@ export function CartItem({ item }: CartItemProps) {
           </button>
 
           <span
-            className="min-w-[1.5rem] text-center text-sm tabular-nums"
+            className="min-w-6 text-center text-sm tabular-nums"
             aria-live="polite"
             aria-label={`Quantity: ${item.quantity}`}
           >

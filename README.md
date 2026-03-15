@@ -1,26 +1,21 @@
-# [project-name]
+# StoreFront
 
-> One-sentence description of what this project does and why it exists.
+> Full-stack e-commerce storefront built with Next.js 16, React 19, and Stripe.
 
-[![Tests](https://github.com/[username]/[repo]/actions/workflows/ci-test.yml/badge.svg)](https://github.com/[username]/[repo]/actions/workflows/ci-test.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
-[![Live Demo](https://img.shields.io/badge/demo-live-blue)](https://[project].vercel.app)
+[![Live Demo](https://img.shields.io/badge/demo-live-blue)](https://e-commerce-nextjs16.vercel.app)
 
 ---
 
 ## What This Does
 
-2–3 sentences. Focus on the problem solved, not the tech used. A visitor should understand the value in under 10 seconds.
-
-**Example:** _"This storefront handles the full e-commerce loop — product browsing, cart management, and Stripe checkout — with sub-100ms page loads via aggressive server-side caching and zero client-side data fetching for the catalog."_
+A production-ready storefront covering the full e-commerce loop — product browsing, cart management, and Stripe Checkout — with sub-100ms catalog pages via server-side `use cache` and zero client JS on the product grid. Guest and authenticated checkout are both supported.
 
 ---
 
 ## Technical Highlights
 
-> The most important section for portfolio repos. Explain the decisions that make this codebase worth reading.
-
-- **`use cache` + `cacheTag()` for per-function cache control** — product detail pages cache for 10 minutes independently of the catalog, which revalidates in 5. Stripe webhooks bust only the affected product tags, not the whole cache.
+- **`use cache` + `cacheTag()` for per-function cache control** — product detail pages cache for 10 minutes independently of the catalog, which revalidates in seconds. Stripe webhooks bust only the affected product tags, not the whole cache.
 
 - **Server Component–first architecture with client islands** — the product catalog page ships zero client JS for the grid itself. `"use client"` is added only at the interactive leaf: cart button, quantity stepper, filter sidebar.
 
@@ -35,13 +30,15 @@
 ## Features
 
 - Product catalog with category filtering, price range, in-stock toggle, and sort
+- Quick-add to cart from the product grid (hover slide-up button)
 - Product detail pages with image gallery, structured data (JSON-LD), and static generation
 - Client-side cart with `sessionStorage` persistence and real-time stock guards
 - Guest checkout and authenticated checkout flows
 - Stripe Checkout integration with webhook-driven order fulfillment
 - Clerk authentication with sign-in/sign-up and protected account routes
 - Order history page with full item snapshots
-- Three-stage CI pipeline: test → preview deploy → production deploy
+- Browse catalog at `/search` with sidebar filters, active filter chips, pagination
+- Admin overview dashboard at `/admin`
 
 ---
 
@@ -49,55 +46,60 @@
 
 | Layer           | Technology                                        |
 | --------------- | ------------------------------------------------- |
-| Framework       | Next.js 16 (canary) · App Router · React 19       |
-| Language        | TypeScript 5.6 · strict mode                      |
-| Styling         | Tailwind CSS v4 · Shadcn/ui                       |
+| Framework       | Next.js 16 · App Router · React 19                |
+| Language        | TypeScript 5 · strict mode                        |
+| Styling         | Tailwind CSS v4 · shadcn/ui                       |
 | Database        | Neon (serverless Postgres)                        |
 | ORM             | Drizzle ORM                                       |
 | Auth            | Clerk                                             |
 | Payments        | Stripe                                            |
-| State           | Zustand (cart) · Server Components (server state) |
+| State           | Zustand v5 with Immer (cart)                      |
 | Validation      | Zod                                               |
 | Testing         | Vitest · Testing Library                          |
 | CI/CD           | GitHub Actions · Vercel                           |
-| Package manager | pnpm 9                                            |
+| Package manager | pnpm                                              |
 
 ---
 
 ## Prerequisites
 
-| Tool    | Version                         |
-| ------- | ------------------------------- |
-| Node.js | 22 LTS (via `mise use node@22`) |
-| pnpm    | 9.x                             |
-| mise    | latest                          |
+| Tool    | Version  |
+| ------- | -------- |
+| Node.js | 22 LTS   |
+| pnpm    | 10.x     |
 
 ---
 
 ## Getting Started
 
-**1. Clone and install**
+### 1. Clone and install
 
 ```bash
-git clone git@github.com:[username]/storefront.git
-cd storefront
+git clone https://github.com/kapsarovL/e-commerce-nextjs16.git
+cd e-commerce-nextjs16
 pnpm install
 ```
 
-**2. Configure environment**
+### 2. Configure environment
 
 ```bash
 cp .env.example .env.local
 # Fill in all values — see Environment Variables below
 ```
 
-**3. Push database schema**
+### 3. Push database schema
 
 ```bash
 pnpm db:push
 ```
 
-**4. Start dev server**
+### 4. Seed sample data
+
+```bash
+pnpm db:seed
+```
+
+### 5. Start dev server
 
 ```bash
 pnpm dev
@@ -136,34 +138,41 @@ pnpm dev
 | `pnpm db:push`     | Push schema directly to DB (dev)       |
 | `pnpm db:migrate`  | Run migrations (production)            |
 | `pnpm db:studio`   | Open Drizzle Studio                    |
+| `pnpm db:seed`     | Seed sample categories and products    |
 
 ---
 
 ## Project Structure
 
-```bash
-storefront/
+```text
+e-commerce-nextjs16/
 │
 ├── app/                            # Next.js App Router
-│   ├── (auth)/                     # Clerk auth pages (sign-in, sign-up)
+│   ├── page.tsx                    # Homepage — hero, featured, categories
+│   │
+│   ├── (auth)/                     # Clerk auth pages
 │   │   ├── sign-in/[[...sign-in]]/
 │   │   └── sign-up/[[...sign-up]]/
 │   │
 │   ├── (shop)/                     # Public storefront — Server Components
-│   │   ├── layout.tsx              #   Shell, navbar, footer
-│   │   ├── page.tsx                #   Homepage / featured products
+│   │   ├── layout.tsx              #   Navbar + Footer shell
 │   │   ├── products/
 │   │   │   ├── page.tsx            #   Product catalog (filtered, paginated)
 │   │   │   └── [slug]/page.tsx     #   Product detail + JSON-LD
-│   │   └── search/page.tsx         #   Search results
+│   │   └── search/page.tsx         #   Browse catalog with sidebar filters
 │   │
 │   ├── (account)/                  # Protected routes — requires Clerk session
 │   │   ├── layout.tsx
+│   │   ├── page.tsx                #   Account overview
 │   │   └── orders/
 │   │       ├── page.tsx            #   Order history
 │   │       └── [id]/page.tsx       #   Order detail
 │   │
-│   ├── cart/page.tsx               # Client-rendered cart page
+│   ├── admin/                      # Admin dashboard
+│   │   ├── page.tsx                #   Overview — revenue, orders, products
+│   │   └── categories/page.tsx     #   Category management
+│   │
+│   ├── cart/page.tsx               # Cart summary page
 │   ├── checkout/
 │   │   ├── page.tsx                # Checkout form (guest + auth)
 │   │   └── success/page.tsx        # Post-payment confirmation
@@ -175,37 +184,37 @@ storefront/
 │           └── stripe/route.ts     # Order fulfillment on payment events
 │
 ├── components/
-│   ├── ui/                         # Shadcn/ui generated components
+│   ├── ui/                         # shadcn/ui primitives
 │   │
 │   ├── layout/
-│   │   ├── navbar.tsx              # CC — cart badge, Clerk UserButton
-│   │   └── footer.tsx              # SC
+│   │   ├── navbar.tsx              # CC — search bar, cart badge, UserButton
+│   │   ├── footer.tsx              # SC — links, copyright
+│   │   └── search-bar.tsx          # CC — search input with URL sync
 │   │
 │   ├── product/
-│   │   ├── product-card.tsx        # SC — image, name, price, badges
-│   │   ├── product-grid.tsx        # SC — responsive grid + skeleton
+│   │   ├── product-grid.tsx        # SC — responsive grid, skeletons, quick-add
 │   │   ├── product-image-gallery.tsx  # CC — thumbnail switcher
 │   │   ├── add-to-cart-button.tsx  # CC — stock-guarded cart action
-│   │   ├── product-filters.tsx     # CC — sidebar category/price/stock
+│   │   ├── product-filters.tsx     # CC — desktop sidebar + mobile sheet
 │   │   └── product-sort.tsx        # CC — sort select
 │   │
-│   ├── cart/
-│   │   ├── cart-drawer.tsx         # CC — Sheet with cart contents
-│   │   └── cart-item.tsx           # CC — quantity stepper, remove
-│   │
-│   └── checkout/
-│       └── checkout-form.tsx       # CC — guest email, order summary, pay CTA
+│   └── cart/
+│       ├── cart-drawer.tsx         # CC — Sheet with cart contents
+│       ├── cart-item.tsx           # CC — quantity stepper, remove
+│       ├── cart-summary.tsx        # CC — full cart page with order panel
+│       └── add-to-cart-button.tsx  # CC — default + quick-add variants
 │
 ├── lib/
 │   ├── db/
-│   │   ├── index.ts                # Drizzle + Neon client (singleton)
-│   │   ├── schema.ts               # All table definitions + relations
-│   │   ├── queries.ts              # "use cache" data-fetching functions
+│   │   ├── index.ts                # Drizzle + Neon client
+│   │   ├── schema.ts               # Table definitions + relations
+│   │   ├── queries.ts              # `use cache` data-fetching functions
 │   │   └── invalidate.ts           # revalidateTag() Server Actions
 │   │
 │   ├── stripe.ts                   # Stripe client singleton
-│   ├── utils.ts                    # cn(), formatPrice(), stock helpers
+│   ├── utils.ts                    # cn(), formatPrice()
 │   └── validations/
+│       ├── search-params.ts        # Zod schema for catalog URL params
 │       ├── product.ts              # Zod schemas (product)
 │       ├── order.ts                # Zod schemas (order + items)
 │       └── checkout.ts             # Zod schemas (checkout form)
@@ -213,47 +222,39 @@ storefront/
 ├── store/
 │   └── cart.ts                     # Zustand store — cart state + selectors
 │
-├── middleware.ts                   # Clerk route protection
+├── scripts/
+│   └── seed.ts                     # Sample categories + products seed script
+│
+├── proxy.ts                        # Clerk route protection (Next.js middleware)
 ├── drizzle.config.ts               # Drizzle Kit config
 ├── next.config.ts
-├── vitest.config.ts
-├── commitlint.config.js
 ├── .env.example
 └── package.json
 ```
 
-**SC = Server Component** (default, no JS bundle cost)
-**CC = Client Component** (`"use client"` — interactive islands only)
+**SC = Server Component** · **CC = Client Component** (`"use client"` — interactive islands only)
 
-### Key boundaries
+### Key client/server boundary
 
-```bash
+```text
 Page (SC)
 └── ProductGrid (SC)
     └── ProductCard (SC)
         └── AddToCartButton (CC)  ← only this crosses the boundary
 ```
 
-The cart badge in the Navbar, the quantity stepper in CartItem, and the filter sidebar are the only other CC islands. Everything else — catalog, product detail, order history — is server-rendered with no client JS.
-
 ---
 
 ## Architecture Decisions
 
-| Decision                 | Rationale                                                                                                                      |
-| ------------------------ | ------------------------------------------------------------------------------------------------------------------------------ |
-| `use cache` per-function | Fine-grained invalidation — one `cacheTag` bust revalidates only pages that depend on it, not the entire site.                 |
-| Integer cents for prices | No float division anywhere. Stripe, DB, cart store, and display all use the same unit.                                         |
-| Snapshotted order items  | Orders reference snapshotted names and prices, not live rows. Accurate regardless of future product changes.                   |
-| Guest checkout           | Nullable `userId` on orders with `guestEmail` fallback. Removing the sign-in gate is a measurable conversion rate improvement. |
-| Clerk over Auth.js       | Clerk manages the auth session surface entirely. The local `users` table only exists to own relational data (orders).          |
-| Idempotent webhooks      | Both Clerk and Stripe can deliver the same event multiple times. All handlers use upsert / conditional update patterns.        |
-
----
-
-## Contributing
-
-See [CONTRIBUTING.md](./CONTRIBUTING.md) for the full guide: setup, branching, commit conventions, test patterns, and PR checklist.
+| Decision | Rationale |
+| --- | --- |
+| `use cache` per-function | Fine-grained invalidation — one `cacheTag` bust revalidates only pages that depend on it, not the entire site. |
+| Integer cents for prices | No float division anywhere. Stripe, DB, cart store, and display all use the same unit. |
+| Snapshotted order items | Orders store names and prices at purchase time. Accurate regardless of future product changes. |
+| Guest checkout | Nullable `userId` on orders with `guestEmail` fallback. Removing the sign-in gate is a measurable conversion rate improvement. |
+| Clerk over Auth.js | Clerk manages the auth session surface entirely. The local `users` table only exists to own relational data (orders). |
+| Idempotent webhooks | Both Clerk and Stripe can deliver the same event multiple times. All handlers use upsert / conditional update patterns. |
 
 ---
 
