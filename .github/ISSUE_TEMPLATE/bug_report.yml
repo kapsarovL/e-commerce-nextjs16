@@ -48,6 +48,7 @@ body:
         - Orders / Account
         - Admin dashboard
         - Payments (Stripe)
+        - Performance
         - Other
     validations:
       required: true
