@@ -44,29 +44,29 @@ A production-ready storefront covering the full e-commerce loop — product brow
 
 ## Tech Stack
 
-| Layer           | Technology                                        |
-| --------------- | ------------------------------------------------- |
-| Framework       | Next.js 16 · App Router · React 19                |
-| Language        | TypeScript 5 · strict mode                        |
-| Styling         | Tailwind CSS v4 · shadcn/ui                       |
-| Database        | Neon (serverless Postgres)                        |
-| ORM             | Drizzle ORM                                       |
-| Auth            | Clerk                                             |
-| Payments        | Stripe                                            |
-| State           | Zustand v5 with Immer (cart)                      |
-| Validation      | Zod                                               |
-| Testing         | Vitest · Testing Library                          |
-| CI/CD           | GitHub Actions · Vercel                           |
-| Package manager | pnpm                                              |
+| Layer           | Technology                         |
+| --------------- | ---------------------------------- |
+| Framework       | Next.js 16 · App Router · React 19 |
+| Language        | TypeScript 5 · strict mode         |
+| Styling         | Tailwind CSS v4 · shadcn/ui        |
+| Database        | Neon (serverless Postgres)         |
+| ORM             | Drizzle ORM                        |
+| Auth            | Clerk                              |
+| Payments        | Stripe                             |
+| State           | Zustand v5 with Immer (cart)       |
+| Validation      | Zod                                |
+| Testing         | Vitest · Testing Library           |
+| CI/CD           | GitHub Actions · Vercel            |
+| Package manager | pnpm                               |
 
 ---
 
 ## Prerequisites
 
-| Tool    | Version  |
-| ------- | -------- |
-| Node.js | 22 LTS   |
-| pnpm    | 10.x     |
+| Tool    | Version |
+| ------- | ------- |
+| Node.js | 22 LTS  |
+| pnpm    | 10.x    |
 
 ---
 
@@ -247,14 +247,14 @@ Page (SC)
 
 ## Architecture Decisions
 
-| Decision | Rationale |
-| --- | --- |
-| `use cache` per-function | Fine-grained invalidation — one `cacheTag` bust revalidates only pages that depend on it, not the entire site. |
-| Integer cents for prices | No float division anywhere. Stripe, DB, cart store, and display all use the same unit. |
-| Snapshotted order items | Orders store names and prices at purchase time. Accurate regardless of future product changes. |
-| Guest checkout | Nullable `userId` on orders with `guestEmail` fallback. Removing the sign-in gate is a measurable conversion rate improvement. |
-| Clerk over Auth.js | Clerk manages the auth session surface entirely. The local `users` table only exists to own relational data (orders). |
-| Idempotent webhooks | Both Clerk and Stripe can deliver the same event multiple times. All handlers use upsert / conditional update patterns. |
+| Decision                 | Rationale                                                                                                                      |
+| ------------------------ | ------------------------------------------------------------------------------------------------------------------------------ |
+| `use cache` per-function | Fine-grained invalidation — one `cacheTag` bust revalidates only pages that depend on it, not the entire site.                 |
+| Integer cents for prices | No float division anywhere. Stripe, DB, cart store, and display all use the same unit.                                         |
+| Snapshotted order items  | Orders store names and prices at purchase time. Accurate regardless of future product changes.                                 |
+| Guest checkout           | Nullable `userId` on orders with `guestEmail` fallback. Removing the sign-in gate is a measurable conversion rate improvement. |
+| Clerk over Auth.js       | Clerk manages the auth session surface entirely. The local `users` table only exists to own relational data (orders).          |
+| Idempotent webhooks      | Both Clerk and Stripe can deliver the same event multiple times. All handlers use upsert / conditional update patterns.        |
 
 ---
 

@@ -20,12 +20,15 @@ export function Navbar() {
       <header className="border-border bg-background/95 supports-backdrop-filter:bg-background/60 sticky top-0 z-40 w-full border-b backdrop-blur">
         <nav className="container mx-auto flex h-14 items-center gap-4 px-4" aria-label="Main navigation">
           {/* Logo */}
-          <Link href="/" className="text-base font-semibold tracking-tight transition-opacity hover:opacity-80 shrink-0">
+          <Link
+            href="/"
+            className="shrink-0 text-base font-semibold tracking-tight transition-opacity hover:opacity-80"
+          >
             StoreFront
           </Link>
 
           {/* Search bar — grows to fill available space */}
-          <div className="flex-1 max-w-md hidden sm:block">
+          <div className="hidden max-w-md flex-1 sm:block">
             <Suspense>
               <SearchBar />
             </Suspense>

@@ -70,12 +70,8 @@ export default async function AdminOrdersPage() {
 
                   return (
                     <tr key={order.id} className="hover:bg-muted/30 transition-colors">
-                      <td className="px-4 py-3 font-mono text-xs font-medium">
-                        #{order.id.slice(0, 8).toUpperCase()}
-                      </td>
-                      <td className="text-muted-foreground max-w-[160px] truncate px-4 py-3">
-                        {customerName}
-                      </td>
+                      <td className="px-4 py-3 font-mono text-xs font-medium">#{order.id.slice(0, 8).toUpperCase()}</td>
+                      <td className="text-muted-foreground max-w-[160px] truncate px-4 py-3">{customerName}</td>
                       <td className="px-4 py-3">
                         <span
                           className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${orderStatusColors[order.orderStatus] ?? 'bg-muted text-muted-foreground'}`}
@@ -94,7 +90,7 @@ export default async function AdminOrdersPage() {
                         {order.items.length} {order.items.length === 1 ? 'item' : 'items'}
                       </td>
                       <td className="px-4 py-3 text-right font-medium">{formatPrice(order.totalCents)}</td>
-                      <td className="text-muted-foreground whitespace-nowrap px-4 py-3 text-xs">
+                      <td className="text-muted-foreground px-4 py-3 text-xs whitespace-nowrap">
                         {new Date(order.createdAt).toLocaleDateString('en-US', {
                           month: 'short',
                           day: 'numeric',

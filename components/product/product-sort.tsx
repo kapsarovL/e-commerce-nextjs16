@@ -36,7 +36,7 @@ export function ProductSort({ currentSort }: ProductSortProps) {
         value={currentSort}
         onChange={e => handleChange(e.target.value)}
         aria-label="Sort products"
-        className="border-border bg-background text-foreground focus:ring-ring appearance-none rounded-lg border py-1.5 pr-7 pl-8 text-sm outline-none transition-shadow focus:ring-2 focus:ring-offset-1"
+        className="border-border bg-background text-foreground focus:ring-ring appearance-none rounded-lg border py-1.5 pr-7 pl-8 text-sm transition-shadow outline-none focus:ring-2 focus:ring-offset-1"
       >
         {SORT_OPTIONS.map(opt => (
           <option key={opt.value} value={opt.value}>

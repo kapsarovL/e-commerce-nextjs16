@@ -11,12 +11,7 @@ interface SearchBarProps {
   onSearch?: () => void;
 }
 
-export function SearchBar({
-  placeholder = 'Search products…',
-  className = '',
-  autoFocus,
-  onSearch,
-}: SearchBarProps) {
+export function SearchBar({ placeholder = 'Search products…', className = '', autoFocus, onSearch }: SearchBarProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const inputRef = useRef<HTMLInputElement>(null);
@@ -50,7 +45,7 @@ export function SearchBar({
         placeholder={placeholder}
         autoFocus={autoFocus}
         aria-label="Search products"
-        className="border-border bg-background text-foreground placeholder:text-muted-foreground focus:ring-ring h-9 w-full rounded-lg border py-2 pr-9 pl-9 text-sm outline-none transition-shadow focus:ring-2 focus:ring-offset-1"
+        className="border-border bg-background text-foreground placeholder:text-muted-foreground focus:ring-ring h-9 w-full rounded-lg border py-2 pr-9 pl-9 text-sm transition-shadow outline-none focus:ring-2 focus:ring-offset-1"
       />
       {value && (
         <button

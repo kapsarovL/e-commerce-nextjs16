@@ -40,9 +40,7 @@ export function AddToCartButton({ product, variant = 'default' }: AddToCartButto
         disabled={outOfStock}
         aria-label={added ? 'Added to cart' : `Add ${product.name} to cart`}
         className={`flex w-full items-center justify-center gap-2 py-2.5 text-sm font-medium transition-colors ${
-          added
-            ? 'bg-green-600 text-white'
-            : 'bg-foreground text-background hover:bg-foreground/90'
+          added ? 'bg-green-600 text-white' : 'bg-foreground text-background hover:bg-foreground/90'
         }`}
       >
         {added ? (

@@ -29,16 +29,7 @@ export async function getProducts(params: Partial<ProductSearchParams> = {}): Pr
   cacheLife('seconds');
   cacheTag(CACHE_TAGS.products);
 
-  const {
-    search,
-    category,
-    page = 1,
-    perPage = 24,
-    minPrice,
-    maxPrice,
-    sort,
-    inStock,
-  } = params;
+  const { search, category, page = 1, perPage = 24, minPrice, maxPrice, sort, inStock } = params;
 
   const conditions = [eq(products.isPublished, true)];
 
@@ -58,18 +49,27 @@ export async function getProducts(params: Partial<ProductSearchParams> = {}): Pr
 
   const orderBy = (() => {
     switch (sort) {
-      case 'price-asc': return asc(products.priceCents);
-      case 'price-desc': return desc(products.priceCents);
-      case 'name-asc': return asc(products.name);
-      case 'name-desc': return desc(products.name);
-      case 'oldest': return asc(products.createdAt);
-      default: return desc(products.createdAt);
+      case 'price-asc':
+        return asc(products.priceCents);
+      case 'price-desc':
+        return desc(products.priceCents);
+      case 'name-asc':
+        return asc(products.name);
+      case 'name-desc':
+        return desc(products.name);
+      case 'oldest':
+        return asc(products.createdAt);
+      default:
+        return desc(products.createdAt);
     }
   })();
 
   const [rows, [{ count }]] = await Promise.all([
     db.query.products.findMany({ where, orderBy, limit: perPage, offset: (page - 1) * perPage }),
-    db.select({ count: sql<number>`cast(count(*) as int)` }).from(products).where(where),
+    db
+      .select({ count: sql<number>`cast(count(*) as int)` })
+      .from(products)
+      .where(where),
   ]);
 
   const total = count ?? 0;
