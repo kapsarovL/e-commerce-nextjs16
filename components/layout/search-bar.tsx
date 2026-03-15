@@ -40,6 +40,7 @@ export function SearchBar({ placeholder = 'Search products…', className = '', 
       <input
         ref={inputRef}
         type="search"
+        name="search"
         value={value}
         onChange={e => setValue(e.target.value)}
         placeholder={placeholder}
