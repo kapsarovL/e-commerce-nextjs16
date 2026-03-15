@@ -65,9 +65,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
             </div>
           </div>
 
-          {product.description && (
-            <p className="text-muted-foreground leading-relaxed">{product.description}</p>
-          )}
+          {product.description && <p className="text-muted-foreground leading-relaxed">{product.description}</p>}
 
           <AddToCartButton
             product={{

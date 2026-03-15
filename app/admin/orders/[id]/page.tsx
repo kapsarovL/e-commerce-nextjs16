@@ -122,9 +122,7 @@ export default async function AdminOrderDetailPage({ params }: Props) {
           <CardContent className="space-y-1 text-sm">
             <p className="font-medium">{customerName}</p>
             {order.user && <p className="text-muted-foreground">{order.user.email}</p>}
-            {!order.user && order.guestEmail && (
-              <p className="text-muted-foreground">{order.guestEmail} (guest)</p>
-            )}
+            {!order.user && order.guestEmail && <p className="text-muted-foreground">{order.guestEmail} (guest)</p>}
             {order.stripePaymentIntentId && (
               <p className="text-muted-foreground pt-2 font-mono text-xs">
                 PI: {order.stripePaymentIntentId.slice(0, 24)}…

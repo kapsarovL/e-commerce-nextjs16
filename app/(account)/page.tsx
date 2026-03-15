@@ -30,7 +30,7 @@ export default async function AccountPage() {
   });
 
   return (
-    <div className="container mx-auto max-w-2xl px-4 py-10 space-y-8">
+    <div className="container mx-auto max-w-2xl space-y-8 px-4 py-10">
       <div>
         <h1 className="text-2xl font-bold tracking-tight">My Account</h1>
         <p className="text-muted-foreground mt-1 text-sm">{dbUser.email}</p>
@@ -58,7 +58,12 @@ export default async function AccountPage() {
                   <div>
                     <p className="font-mono text-xs font-medium">#{order.id.slice(0, 8).toUpperCase()}</p>
                     <p className="text-muted-foreground mt-0.5 text-xs capitalize">
-                      {order.orderStatus} · {new Date(order.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                      {order.orderStatus} ·{' '}
+                      {new Date(order.createdAt).toLocaleDateString('en-US', {
+                        month: 'short',
+                        day: 'numeric',
+                        year: 'numeric',
+                      })}
                     </p>
                   </div>
                   <div className="flex items-center gap-3">
