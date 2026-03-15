@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Suspense } from 'react';
 import Link from 'next/link';
 import { ShoppingCart } from 'lucide-react';
@@ -12,8 +12,11 @@ import { Button } from '@/components/ui/button';
 
 export function Navbar() {
   const [cartOpen, setCartOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
   const itemCount = useCartItemCount();
   const { isSignedIn, isLoaded } = useUser();
+
+  useEffect(() => setMounted(true), []);
 
   return (
     <>
@@ -45,7 +48,7 @@ export function Navbar() {
               className="relative"
             >
               <ShoppingCart className="h-4 w-4" />
-              {itemCount > 0 && (
+              {mounted && itemCount > 0 && (
                 <span
                   className="bg-primary text-primary-foreground absolute -top-0.5 -right-0.5 flex h-4 w-4 items-center justify-center rounded-full text-[10px] font-medium tabular-nums"
                   aria-hidden="true"
