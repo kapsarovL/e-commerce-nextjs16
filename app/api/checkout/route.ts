@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { auth, currentUser } from '@clerk/nextjs/server';
 import { z } from 'zod';
-import { stripe } from '@/lib/stripe';
+import { getStripe } from '@/lib/stripe';
 import { db } from '@/lib/db';
 import { products, orders, orderItems, users } from '@/lib/db/schema';
 import { eq, inArray } from 'drizzle-orm';
@@ -107,7 +107,7 @@ export async function POST(req: Request) {
   // ── Stripe Customer ID — create once, reuse forever ───────────────────────
   if (clerkId && dbUserId && !stripeCustomerId) {
     try {
-      const customer = await stripe.customers.create({
+      const customer = await getStripe().customers.create({
         email: customerEmail,
         metadata: { clerkId, dbUserId },
       });
@@ -135,14 +135,15 @@ export async function POST(req: Request) {
     };
   });
 
-  let session: Awaited<ReturnType<typeof stripe.checkout.sessions.create>>;
+  const s = getStripe();
+  let session: Awaited<ReturnType<typeof s.checkout.sessions.create>>;
   try {
     // Build shipping options only if env vars are set
     const shippingOptions = [process.env.STRIPE_SHIPPING_RATE_STANDARD, process.env.STRIPE_SHIPPING_RATE_EXPRESS]
       .filter(Boolean)
       .map(rate => ({ shipping_rate: rate as string }));
 
-    session = await stripe.checkout.sessions.create({
+    session = await s.checkout.sessions.create({
       mode: 'payment',
       payment_method_types: ['card'],
       ...(stripeCustomerId ? { customer: stripeCustomerId } : { customer_email: customerEmail }),
