@@ -39,6 +39,7 @@ A production-ready storefront covering the full e-commerce loop — product brow
 - Order history page with full item snapshots
 - Browse catalog at `/search` with sidebar filters, active filter chips, pagination
 - Admin overview dashboard at `/admin`
+- Vercel Analytics for production traffic insights
 
 ---
 
@@ -56,6 +57,7 @@ A production-ready storefront covering the full e-commerce loop — product brow
 | State           | Zustand v5 with Immer (cart)       |
 | Validation      | Zod                                |
 | Testing         | Vitest · Testing Library           |
+| Analytics       | Vercel Analytics                   |
 | CI/CD           | GitHub Actions · Vercel            |
 | Package manager | pnpm                               |
 
@@ -163,10 +165,10 @@ e-commerce-nextjs16/
 │   │
 │   ├── (account)/                  # Protected routes — requires Clerk session
 │   │   ├── layout.tsx
-│   │   ├── page.tsx                #   Account overview
+│   │   ├── account/page.tsx        #   Account overview (/account)
 │   │   └── orders/
-│   │       ├── page.tsx            #   Order history
-│   │       └── [id]/page.tsx       #   Order detail
+│   │       ├── page.tsx            #   Order history (/orders)
+│   │       └── [id]/page.tsx       #   Order detail (/orders/[id])
 │   │
 │   ├── admin/                      # Admin dashboard
 │   │   ├── page.tsx                #   Overview — revenue, orders, products
@@ -212,7 +214,7 @@ e-commerce-nextjs16/
 │   │   └── invalidate.ts           # revalidateTag() Server Actions
 │   │
 │   ├── stripe.ts                   # Stripe client singleton
-│   ├── utils.ts                    # cn(), formatPrice()
+│   ├── utils.ts                    # cn(), formatPrice(), isLowStock(), isOutOfStock()
 │   └── validations/
 │       ├── search-params.ts        # Zod schema for catalog URL params
 │       ├── product.ts              # Zod schemas (product)

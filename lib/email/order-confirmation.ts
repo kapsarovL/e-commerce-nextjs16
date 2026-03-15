@@ -38,9 +38,16 @@ export async function sendOrderConfirmation(params: OrderConfirmationParams): Pr
     return;
   }
 
-  // TODO: integrate email provider
-  // Example with Resend:
-  // const resend = new Resend(process.env.RESEND_API_KEY);
-  // await resend.emails.send({ from: '...', to: params.customerEmail, subject: '...', html: '...' });
-  console.warn('[email] sendOrderConfirmation: no email provider configured');
+  // Email sending is intentionally not implemented in this reference project.
+  // To add it, install an email provider and replace this block. Example with Resend:
+  //
+  //   import { Resend } from 'resend';
+  //   const resend = new Resend(process.env.RESEND_API_KEY);
+  //   await resend.emails.send({
+  //     from: 'orders@yourdomain.com',
+  //     to: params.customerEmail,
+  //     subject: `Order confirmed — #${params.orderId.slice(0, 8).toUpperCase()}`,
+  //     html: buildOrderEmailHtml(params),
+  //   });
+  console.warn('[email] sendOrderConfirmation: no email provider configured — order', params.orderId);
 }
