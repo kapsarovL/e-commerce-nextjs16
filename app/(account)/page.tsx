@@ -17,7 +17,7 @@ export default async function AccountPage() {
 
   const dbUser = await db.query.users.findFirst({
     where: eq(users.clerkId, clerkId),
-    columns: { id: true, email: true, name: true },
+    columns: { id: true, email: true, firstName: true, lastName: true },
   });
 
   if (!dbUser) redirect('/sign-in');
