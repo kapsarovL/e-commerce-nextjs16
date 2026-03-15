@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { useRouter, useSearchParams, usePathname } from 'next/navigation';
 import { X, SlidersHorizontal } from 'lucide-react';
-import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
+import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { Button } from '@/components/ui/button';
 import type { ProductSearchParams } from '@/lib/validations/search-params';
 import type { getCategories } from '@/lib/db/queries';
@@ -50,6 +50,7 @@ function MobileFilters({ categories, currentFilters }: ProductFiltersProps) {
       </SheetTrigger>
       <SheetContent side="left" className="w-80 overflow-y-auto p-0" aria-describedby={undefined}>
         <SheetHeader className="border-b px-6 py-4">
+          <SheetDescription className="sr-only">Filter products by category, price, and availability</SheetDescription>
           <SheetTitle className="text-base">Filters</SheetTitle>
         </SheetHeader>
         <div className="px-6 py-4">
@@ -182,6 +183,7 @@ function FilterPanel({ categories, currentFilters, onApply }: FilterPanelProps) 
         <div className="flex items-center gap-2">
           <PriceInput
             aria-label="Minimum price"
+            name="minPrice"
             placeholder="Min"
             defaultValue={currentFilters.minPrice}
             onCommit={val => update({ minPrice: val })}
@@ -189,6 +191,7 @@ function FilterPanel({ categories, currentFilters, onApply }: FilterPanelProps) 
           <span className="text-muted-foreground shrink-0 text-sm">—</span>
           <PriceInput
             aria-label="Maximum price"
+            name="maxPrice"
             placeholder="Max"
             defaultValue={currentFilters.maxPrice}
             onCommit={val => update({ maxPrice: val })}
@@ -203,6 +206,8 @@ function FilterPanel({ categories, currentFilters, onApply }: FilterPanelProps) 
         <label className="group flex cursor-pointer items-center gap-2.5">
           <input
             type="checkbox"
+            name="inStock"
+            id="filter-in-stock"
             checked={currentFilters.inStock}
             onChange={e => update({ inStock: e.target.checked ? 'true' : undefined })}
             className="border-border rounded"
@@ -245,11 +250,13 @@ function PriceInput({
   placeholder,
   defaultValue,
   onCommit,
+  name,
   'aria-label': ariaLabel,
 }: {
   placeholder: string;
   defaultValue?: number;
   onCommit: (val: string | undefined) => void;
+  name: string;
   'aria-label': string;
 }) {
   return (
@@ -259,6 +266,7 @@ function PriceInput({
       </span>
       <input
         type="number"
+        name={name}
         min={0}
         placeholder={placeholder}
         defaultValue={defaultValue ?? ''}
