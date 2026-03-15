@@ -1,6 +1,6 @@
 import { redirect } from 'next/navigation';
 import Link from 'next/link';
-import { stripe } from '@/lib/stripe';
+import { getStripe } from '@/lib/stripe';
 import { db } from '@/lib/db';
 import { orders } from '@/lib/db/schema';
 import { eq } from 'drizzle-orm';
@@ -25,9 +25,10 @@ export default async function CheckoutSuccessPage({ searchParams }: SuccessPageP
   if (!session_id) redirect('/');
 
   // Verify session server-side
-  let session: Awaited<ReturnType<typeof stripe.checkout.sessions.retrieve>>;
+  const s = getStripe();
+  let session: Awaited<ReturnType<typeof s.checkout.sessions.retrieve>>;
   try {
-    session = await stripe.checkout.sessions.retrieve(session_id, {
+    session = await s.checkout.sessions.retrieve(session_id, {
       expand: ['line_items', 'line_items.data.price.product'],
     });
   } catch {
