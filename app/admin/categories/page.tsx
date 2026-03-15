@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import { db } from '@/lib/db';
 import { categories } from '@/lib/db/schema';
-import { asc, sql } from 'drizzle-orm';
+import { asc } from 'drizzle-orm';
 import { Card, CardContent } from '@/components/ui/card';
 
 export const metadata: Metadata = { title: 'Admin — Categories' };
