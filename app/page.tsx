@@ -8,6 +8,8 @@ import { Button } from '@/components/ui/button';
 import { getFeaturedProducts, getCategories } from '@/lib/db/queries';
 import { formatPrice } from '@/lib/utils';
 
+export const dynamic = 'force-dynamic';
+
 export const metadata: Metadata = {
   title: 'StoreFront — Quality goods, delivered fast',
   description: 'Browse our curated catalog of quality products.',

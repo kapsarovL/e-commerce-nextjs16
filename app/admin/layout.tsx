@@ -1,5 +1,7 @@
 import { auth } from '@clerk/nextjs/server';
 import { redirect } from 'next/navigation';
+
+export const dynamic = 'force-dynamic';
 import Link from 'next/link';
 import { LayoutDashboard, Package, ShoppingCart, Tag, BarChart3 } from 'lucide-react';
 import { UserButton } from '@clerk/nextjs';
