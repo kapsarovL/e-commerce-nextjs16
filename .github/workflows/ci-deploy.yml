@@ -17,6 +17,8 @@ jobs:
     name: Type check · Lint · Test
     runs-on: ubuntu-latest
     timeout-minutes: 15
+    permissions:
+      contents: read
 
     steps:
       - uses: actions/checkout@v4
@@ -49,6 +51,9 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 20
     needs: test # Hard dependency — never deploys if tests fail
+    permissions:
+      contents: read
+      deployments: write
 
     environment:
       name: production
