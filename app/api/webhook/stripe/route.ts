@@ -1,7 +1,7 @@
 import { headers } from 'next/headers';
 import { NextResponse } from 'next/server';
 import type Stripe from 'stripe';
-import { stripe } from '@/lib/stripe';
+import { getStripe } from '@/lib/stripe';
 import { db } from '@/lib/db';
 import { orders, orderItems, products, users } from '@/lib/db/schema';
 import { eq, and, gte, sql } from 'drizzle-orm';
@@ -20,7 +20,7 @@ export async function POST(req: Request) {
 
   let event: Stripe.Event;
   try {
-    event = stripe.webhooks.constructEvent(body, sig, webhookSecret);
+    event = getStripe().webhooks.constructEvent(body, sig, webhookSecret);
   } catch {
     return new NextResponse('Invalid signature', { status: 401 });
   }
@@ -81,7 +81,7 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
 
   if (!order) {
     // Pending DB insert failed — reconstruct from Stripe data
-    const stripeLineItems = await stripe.checkout.sessions.listLineItems(session.id, {
+    const stripeLineItems = await getStripe().checkout.sessions.listLineItems(session.id, {
       expand: ['data.price.product'],
       limit: 100,
     });
