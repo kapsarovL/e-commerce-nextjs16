@@ -258,4 +258,4 @@ Page (SC)
 
 ---
 
-_Built by [Lazar Kapsarov](https://lazarkapsarov.com) · [PrismaFlux Media](https://prismaflux.media)_
+\_Built by [Lazar Kapsarov](https://lazarkapsarov.com)
