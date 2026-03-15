@@ -1,0 +1,77 @@
+name: Bug Report
+description: Something is broken or not working as expected
+labels: ['bug']
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to report a bug. Please fill in as much detail as possible.
+
+  - type: textarea
+    id: description
+    attributes:
+      label: What happened?
+      description: A clear description of the bug.
+      placeholder: When I click "Add to cart" on the product page, nothing happens.
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      description: How can we reproduce this?
+      placeholder: |
+        1. Go to /products
+        2. Click on a product
+        3. Click "Add to cart"
+        4. See error
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+      description: What should have happened?
+    validations:
+      required: true
+
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      options:
+        - Cart / Checkout
+        - Product catalog / Search
+        - Authentication
+        - Orders / Account
+        - Admin dashboard
+        - Payments (Stripe)
+        - Other
+    validations:
+      required: true
+
+  - type: input
+    id: url
+    attributes:
+      label: Page URL
+      placeholder: 'https://e-commerce-nextjs16.vercel.app/products/some-slug'
+
+  - type: dropdown
+    id: browser
+    attributes:
+      label: Browser
+      options:
+        - Chrome
+        - Firefox
+        - Safari
+        - Edge
+        - Other
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Console errors (if any)
+      description: Paste any relevant browser console errors.
+      render: shell
