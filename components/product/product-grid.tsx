@@ -41,7 +41,7 @@ function ProductCard({ product }: { product: Product }) {
   return (
     <div className="border-border bg-card group flex flex-col overflow-hidden rounded-xl border transition-shadow hover:shadow-md">
       {/* Image */}
-      <div className="relative aspect-square overflow-hidden bg-muted">
+      <div className="bg-muted relative aspect-square overflow-hidden">
         <Link href={`/products/${product.slug}`} className="block h-full w-full">
           {primaryImage ? (
             <Image
@@ -52,7 +52,7 @@ function ProductCard({ product }: { product: Product }) {
               className="object-cover transition-transform duration-300 group-hover:scale-105"
             />
           ) : (
-            <div className="h-full w-full bg-muted" />
+            <div className="bg-muted h-full w-full" />
           )}
         </Link>
 
@@ -75,7 +75,14 @@ function ProductCard({ product }: { product: Product }) {
         {!isOutOfStock && (
           <div className="absolute inset-x-0 bottom-0 translate-y-full transition-transform duration-200 group-hover:translate-y-0">
             <AddToCartButton
-              product={{ id: product.id, slug: product.slug, name: product.name, imageUrl, priceCents: product.priceCents, stockQuantity: product.stockQuantity }}
+              product={{
+                id: product.id,
+                slug: product.slug,
+                name: product.name,
+                imageUrl,
+                priceCents: product.priceCents,
+                stockQuantity: product.stockQuantity,
+              }}
               variant="quick-add"
             />
           </div>
@@ -85,12 +92,12 @@ function ProductCard({ product }: { product: Product }) {
       {/* Info */}
       <div className="flex flex-col gap-1.5 p-3">
         <Link href={`/products/${product.slug}`} className="hover:underline">
-          <p className="line-clamp-2 text-sm font-medium leading-snug">{product.name}</p>
+          <p className="line-clamp-2 text-sm leading-snug font-medium">{product.name}</p>
         </Link>
         <div className="flex items-center gap-2">
           <span className="text-sm font-semibold tabular-nums">{formatPrice(product.priceCents)}</span>
           {isOnSale && (
-            <span className="text-muted-foreground text-xs line-through tabular-nums">
+            <span className="text-muted-foreground text-xs tabular-nums line-through">
               {formatPrice(product.comparePriceCents!)}
             </span>
           )}
@@ -108,11 +115,7 @@ interface ProductGridSkeletonProps {
 
 export function ProductGridSkeleton({ count = 8 }: ProductGridSkeletonProps) {
   return (
-    <ul
-      className="grid grid-cols-2 gap-4 lg:grid-cols-3 xl:grid-cols-4"
-      aria-busy="true"
-      aria-label="Loading products"
-    >
+    <ul className="grid grid-cols-2 gap-4 lg:grid-cols-3 xl:grid-cols-4" aria-busy="true" aria-label="Loading products">
       {Array.from({ length: count }).map((_, i) => (
         <li key={i}>
           <ProductCardSkeleton />
@@ -125,10 +128,10 @@ export function ProductGridSkeleton({ count = 8 }: ProductGridSkeletonProps) {
 function ProductCardSkeleton() {
   return (
     <div className="border-border bg-card animate-pulse overflow-hidden rounded-xl border" aria-hidden="true">
-      <div className="aspect-square bg-muted" />
+      <div className="bg-muted aspect-square" />
       <div className="flex flex-col gap-2 p-3">
-        <div className="h-4 w-4/5 rounded bg-muted" />
-        <div className="h-4 w-1/3 rounded bg-muted" />
+        <div className="bg-muted h-4 w-4/5 rounded" />
+        <div className="bg-muted h-4 w-1/3 rounded" />
       </div>
     </div>
   );

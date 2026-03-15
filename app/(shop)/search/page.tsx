@@ -121,7 +121,10 @@ function Pagination({
       {/* Pages */}
       {pages.map((p, i) =>
         p === '…' ? (
-          <span key={`ellipsis-${i}`} className="text-muted-foreground flex h-8 w-8 items-center justify-center text-sm">
+          <span
+            key={`ellipsis-${i}`}
+            className="text-muted-foreground flex h-8 w-8 items-center justify-center text-sm"
+          >
             …
           </span>
         ) : (
@@ -130,9 +133,7 @@ function Pagination({
             href={pageHref(p as number)}
             aria-current={p === currentPage ? 'page' : undefined}
             className={`flex h-8 w-8 items-center justify-center rounded-lg border text-sm font-medium transition-colors ${
-              p === currentPage
-                ? 'bg-primary text-primary-foreground border-primary'
-                : 'border-border hover:bg-muted'
+              p === currentPage ? 'bg-primary text-primary-foreground border-primary' : 'border-border hover:bg-muted'
             }`}
           >
             {p}

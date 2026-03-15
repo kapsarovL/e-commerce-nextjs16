@@ -128,9 +128,7 @@ function FilterPanel({ categories, currentFilters, onApply }: FilterPanelProps) 
               onRemove={() => update({ category: undefined })}
             />
           )}
-          {currentFilters.inStock && (
-            <FilterChip label="In stock" onRemove={() => update({ inStock: undefined })} />
-          )}
+          {currentFilters.inStock && <FilterChip label="In stock" onRemove={() => update({ inStock: undefined })} />}
           {currentFilters.minPrice !== undefined && (
             <FilterChip label={`Min $${currentFilters.minPrice}`} onRemove={() => update({ minPrice: undefined })} />
           )}
@@ -146,7 +144,7 @@ function FilterPanel({ categories, currentFilters, onApply }: FilterPanelProps) 
       <section aria-labelledby="filter-category-heading">
         <p
           id="filter-category-heading"
-          className="text-muted-foreground mb-3 text-xs font-semibold uppercase tracking-wider"
+          className="text-muted-foreground mb-3 text-xs font-semibold tracking-wider uppercase"
         >
           Category
         </p>
@@ -176,7 +174,7 @@ function FilterPanel({ categories, currentFilters, onApply }: FilterPanelProps) 
       <section aria-labelledby="filter-price-heading">
         <p
           id="filter-price-heading"
-          className="text-muted-foreground mb-3 text-xs font-semibold uppercase tracking-wider"
+          className="text-muted-foreground mb-3 text-xs font-semibold tracking-wider uppercase"
         >
           Price range
         </p>
@@ -225,9 +223,7 @@ function CategoryButton({ label, active, onClick }: { label: string; active: boo
       type="button"
       onClick={onClick}
       className={`w-full rounded-lg px-2.5 py-1.5 text-left text-sm transition-colors ${
-        active
-          ? 'bg-primary/10 text-primary font-medium'
-          : 'text-muted-foreground hover:bg-muted hover:text-foreground'
+        active ? 'bg-primary/10 text-primary font-medium' : 'text-muted-foreground hover:bg-muted hover:text-foreground'
       }`}
     >
       {label}
@@ -261,7 +257,7 @@ function PriceInput({
 }) {
   return (
     <div className="relative flex-1">
-      <span className="text-muted-foreground pointer-events-none absolute left-2.5 top-1/2 -translate-y-1/2 text-sm">
+      <span className="text-muted-foreground pointer-events-none absolute top-1/2 left-2.5 -translate-y-1/2 text-sm">
         $
       </span>
       <input

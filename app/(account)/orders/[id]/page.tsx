@@ -58,8 +58,7 @@ export default async function OrderDetailPage({ params }: OrderDetailPageProps) 
           {order.items.map(item => (
             <li key={item.id} className="flex justify-between text-sm">
               <span>
-                {item.productName}{' '}
-                <span className="text-muted-foreground">× {item.quantity}</span>
+                {item.productName} <span className="text-muted-foreground">× {item.quantity}</span>
               </span>
               <span className="tabular-nums">{formatPrice(item.totalCents)}</span>
             </li>

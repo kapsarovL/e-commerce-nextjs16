@@ -56,7 +56,12 @@ export async function createProduct(_prev: ActionResult, fd: FormData): Promise<
   }
 
   const { tags, ...data } = parsed.data;
-  const tagsArray = tags ? tags.split(',').map(t => t.trim()).filter(Boolean) : [];
+  const tagsArray = tags
+    ? tags
+        .split(',')
+        .map(t => t.trim())
+        .filter(Boolean)
+    : [];
 
   try {
     const [product] = await db
@@ -80,10 +85,18 @@ export async function updateProduct(id: string, _prev: ActionResult, fd: FormDat
   }
 
   const { tags, ...data } = parsed.data;
-  const tagsArray = tags ? tags.split(',').map(t => t.trim()).filter(Boolean) : [];
+  const tagsArray = tags
+    ? tags
+        .split(',')
+        .map(t => t.trim())
+        .filter(Boolean)
+    : [];
 
   try {
-    await db.update(products).set({ ...data, tags: tagsArray }).where(eq(products.id, id));
+    await db
+      .update(products)
+      .set({ ...data, tags: tagsArray })
+      .where(eq(products.id, id));
     revalidatePath('/admin/products');
     revalidatePath(`/products/${data.slug}`);
     return { success: true, productId: id };
@@ -100,7 +113,10 @@ export async function toggleProductPublished(productId: string, currentValue: bo
 
 export async function updateOrderStatus(orderId: string, status: string): Promise<void> {
   await requireAdmin();
-  await db.update(orders).set({ orderStatus: status as typeof orders.$inferInsert.orderStatus }).where(eq(orders.id, orderId));
+  await db
+    .update(orders)
+    .set({ orderStatus: status as typeof orders.$inferInsert.orderStatus })
+    .where(eq(orders.id, orderId));
   revalidatePath('/admin/orders');
   revalidatePath(`/admin/orders/${orderId}`);
 }
