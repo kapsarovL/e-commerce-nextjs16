@@ -16,6 +16,7 @@
     "db:push": "drizzle-kit push",
     "db:migrate": "drizzle-kit migrate",
     "db:studio": "drizzle-kit studio",
+    "db:seed": "tsx scripts/seed.ts",
     "test": "vitest",
     "test:ci": "vitest run --coverage",
     "prepare": "node --eval \"if (!process.env.CI) require('node:child_process').execSync('husky', {stdio:'inherit'});\""
