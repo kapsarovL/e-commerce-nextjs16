@@ -75,7 +75,7 @@
     "@vitest/coverage-v8": "^4.1.0",
     "drizzle-kit": "^0.31.9",
     "eslint": "^10",
-    "eslint-config-next": "16.1.6",
+    "eslint-config-next": "16.2.1",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-react": "^7.37.5",
     "eslint-plugin-react-compiler": "^19.1.0-rc.2",
