@@ -22,7 +22,7 @@
     "prepare": "node --eval \"if (!process.env.CI) require('node:child_process').execSync('husky', {stdio:'inherit'});\""
   },
   "dependencies": {
-    "@clerk/nextjs": "^7.0.4",
+    "@clerk/nextjs": "^7.0.7",
     "@neondatabase/serverless": "^1.0.2",
     "@stripe/stripe-js": "^8.11.0",
     "@uploadthing/react": "^7.3.3",
@@ -34,7 +34,7 @@
     "clsx": "^2.1.1",
     "dotenv": "^17.3.1",
     "dotenv-flow": "^4.1.0",
-    "drizzle-orm": "^0.45.1",
+    "drizzle-orm": "^0.45.2",
     "drizzle-zod": "^0.8.3",
     "eslint": "10.1.0",
     "immer": "^11.1.4",
@@ -70,24 +70,25 @@
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
-    "@typescript-eslint/eslint-plugin": "^8.46.2",
+    "@typescript-eslint/eslint-plugin": "^8.57.2",
     "@vitejs/plugin-react": "^6.0.1",
-    "@vitest/coverage-v8": "^4.1.0",
-    "drizzle-kit": "^0.31.9",
+    "@vitest/coverage-v8": "^4.1.2",
+    "drizzle-kit": "^0.31.10",
     "eslint": "^10",
     "eslint-config-next": "16.2.1",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-react": "^7.37.5",
     "eslint-plugin-react-compiler": "^19.1.0-rc.2",
     "globals": "^17.4.0",
+    "husky": "^9.1.7",
     "jsdom": "^28.1.0",
     "prettier": "3.8.1",
     "prettier-plugin-tailwindcss": "^0.7.1",
     "tailwindcss": "^4",
     "tsx": "^4.21.0",
     "typescript": "^5",
-    "typescript-eslint": "^8.57.0",
-    "vitest": "^4.1.0"
+    "typescript-eslint": "^8.57.2",
+    "vitest": "^4.1.2"
   },
   "pnpm": {
     "overrides": {
