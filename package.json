@@ -22,7 +22,7 @@
     "prepare": "node --eval \"if (!process.env.CI) require('node:child_process').execSync('husky', {stdio:'inherit'});\""
   },
   "dependencies": {
-    "@clerk/nextjs": "^7.0.7",
+    "@clerk/nextjs": "^7.2.3",
     "@neondatabase/serverless": "^1.0.2",
     "@stripe/stripe-js": "^8.11.0",
     "@uploadthing/react": "^7.3.3",
