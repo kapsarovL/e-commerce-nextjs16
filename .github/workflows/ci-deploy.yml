@@ -55,10 +55,6 @@ jobs:
       contents: read
       deployments: write
 
-    environment:
-      name: production
-      url: ${{ steps.deploy.outputs.url }}
-
     steps:
       - uses: actions/checkout@v6
 
