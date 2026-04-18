@@ -88,13 +88,15 @@
     "tsx": "^4.21.0",
     "typescript": "^5",
     "typescript-eslint": "^8.57.2",
+    "vite": "^8.0.8",
     "vitest": "^4.1.2"
   },
   "pnpm": {
     "overrides": {
       "esbuild": ">=0.25.0",
       "path-to-regexp": "8.4.0",
-      "effect": ">=3.20.0"
+      "effect": ">=3.20.0",
+      "hono": ">=4.12.14"
     }
   }
 }
