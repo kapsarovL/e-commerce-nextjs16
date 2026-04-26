@@ -23,7 +23,7 @@
   },
   "dependencies": {
     "@clerk/nextjs": "^7.2.1",
-    "@neondatabase/serverless": "^1.0.2",
+    "@neondatabase/serverless": "^1.1.0",
     "@stripe/stripe-js": "^8.11.0",
     "@uploadthing/react": "^7.3.3",
     "@upstash/ratelimit": "^2.0.8",
