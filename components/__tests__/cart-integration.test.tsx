@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach } from 'vitest';
 import { renderHook, act, waitFor } from '@testing-library/react';
 import { useCartStore } from '@/store/cart';
-import { createMockProduct } from '@/lib/__tests__/test-utils';
+import { createMockCartItem } from '@/lib/__tests__/test-utils';
 
 describe('Cart Store Integration', () => {
   beforeEach(() => {
@@ -10,22 +10,22 @@ describe('Cart Store Integration', () => {
 
   describe('Adding items', () => {
     it('adds a single item to empty cart', () => {
-      const product = createMockProduct();
+      const item = createMockCartItem();
       act(() => {
-        useCartStore.getState().addItem(product);
+        useCartStore.getState().addItem(item);
       });
 
       const items = useCartStore.getState().items;
       expect(items).toHaveLength(1);
-      expect(items[0].id).toBe(product.id);
+      expect(items[0].id).toBe(item.id);
       expect(items[0].quantity).toBe(1);
     });
 
     it('increments quantity when adding duplicate item', () => {
-      const product = createMockProduct();
+      const item = createMockCartItem();
       act(() => {
-        useCartStore.getState().addItem(product);
-        useCartStore.getState().addItem(product);
+        useCartStore.getState().addItem(item);
+        useCartStore.getState().addItem(item);
       });
 
       const items = useCartStore.getState().items;
@@ -34,12 +34,12 @@ describe('Cart Store Integration', () => {
     });
 
     it('adds multiple different items', () => {
-      const product1 = createMockProduct({ id: 'prod-1' });
-      const product2 = createMockProduct({ id: 'prod-2' });
+      const item1 = createMockCartItem({ id: 'item-1' });
+      const item2 = createMockCartItem({ id: 'item-2' });
 
       act(() => {
-        useCartStore.getState().addItem(product1);
-        useCartStore.getState().addItem(product2);
+        useCartStore.getState().addItem(item1);
+        useCartStore.getState().addItem(item2);
       });
 
       const items = useCartStore.getState().items;
@@ -47,9 +47,9 @@ describe('Cart Store Integration', () => {
     });
 
     it('respects stock quantity cap', () => {
-      const product = createMockProduct({ stockQuantity: 5 });
+      const item = createMockCartItem({ stockQuantity: 5 });
       act(() => {
-        useCartStore.getState().addItem({ ...product, quantity: 10 });
+        useCartStore.getState().addItem({ ...item, quantity: 10 });
       });
 
       const items = useCartStore.getState().items;
@@ -57,10 +57,10 @@ describe('Cart Store Integration', () => {
     });
 
     it('increments without exceeding stock limit', () => {
-      const product = createMockProduct({ stockQuantity: 5 });
+      const item = createMockCartItem({ stockQuantity: 5 });
       act(() => {
-        useCartStore.getState().addItem({ ...product, quantity: 3 });
-        useCartStore.getState().addItem({ ...product, quantity: 4 });
+        useCartStore.getState().addItem({ ...item, quantity: 3 });
+        useCartStore.getState().addItem({ ...item, quantity: 4 });
       });
 
       const items = useCartStore.getState().items;
@@ -70,9 +70,9 @@ describe('Cart Store Integration', () => {
 
   describe('Removing items', () => {
     it('removes item by id', () => {
-      const product = createMockProduct({ id: 'prod-1' });
+      const item = createMockCartItem({ id: 'prod-1' });
       act(() => {
-        useCartStore.getState().addItem(product);
+        useCartStore.getState().addItem(item);
         useCartStore.getState().removeItem('prod-1');
       });
 
@@ -80,9 +80,9 @@ describe('Cart Store Integration', () => {
     });
 
     it('does nothing when removing non-existent item', () => {
-      const product = createMockProduct({ id: 'prod-1' });
+      const item = createMockCartItem({ id: 'prod-1' });
       act(() => {
-        useCartStore.getState().addItem(product);
+        useCartStore.getState().addItem(item);
         useCartStore.getState().removeItem('nonexistent');
       });
 
@@ -90,12 +90,12 @@ describe('Cart Store Integration', () => {
     });
 
     it('removes only the specified item from cart with multiple items', () => {
-      const product1 = createMockProduct({ id: 'prod-1' });
-      const product2 = createMockProduct({ id: 'prod-2' });
+      const item1 = createMockCartItem({ id: 'prod-1' });
+      const item2 = createMockCartItem({ id: 'prod-2' });
 
       act(() => {
-        useCartStore.getState().addItem(product1);
-        useCartStore.getState().addItem(product2);
+        useCartStore.getState().addItem(item1);
+        useCartStore.getState().addItem(item2);
         useCartStore.getState().removeItem('prod-1');
       });
 
@@ -107,9 +107,9 @@ describe('Cart Store Integration', () => {
 
   describe('Updating quantity', () => {
     it('updates item quantity', () => {
-      const product = createMockProduct({ id: 'prod-1' });
+      const item = createMockCartItem({ id: 'prod-1' });
       act(() => {
-        useCartStore.getState().addItem(product);
+        useCartStore.getState().addItem(item);
         useCartStore.getState().updateQuantity('prod-1', 5);
       });
 
@@ -117,9 +117,9 @@ describe('Cart Store Integration', () => {
     });
 
     it('removes item when quantity set to 0', () => {
-      const product = createMockProduct({ id: 'prod-1' });
+      const item = createMockCartItem({ id: 'prod-1' });
       act(() => {
-        useCartStore.getState().addItem(product);
+        useCartStore.getState().addItem(item);
         useCartStore.getState().updateQuantity('prod-1', 0);
       });
 
@@ -127,9 +127,9 @@ describe('Cart Store Integration', () => {
     });
 
     it('removes item when quantity set to negative', () => {
-      const product = createMockProduct({ id: 'prod-1' });
+      const item = createMockCartItem({ id: 'prod-1' });
       act(() => {
-        useCartStore.getState().addItem(product);
+        useCartStore.getState().addItem(item);
         useCartStore.getState().updateQuantity('prod-1', -1);
       });
 
@@ -137,9 +137,9 @@ describe('Cart Store Integration', () => {
     });
 
     it('caps quantity at stock limit', () => {
-      const product = createMockProduct({ id: 'prod-1', stockQuantity: 5 });
+      const item = createMockCartItem({ id: 'prod-1', stockQuantity: 5 });
       act(() => {
-        useCartStore.getState().addItem(product);
+        useCartStore.getState().addItem(item);
         useCartStore.getState().updateQuantity('prod-1', 99);
       });
 
@@ -147,9 +147,9 @@ describe('Cart Store Integration', () => {
     });
 
     it('ignores update for non-existent item', () => {
-      const product = createMockProduct({ id: 'prod-1' });
+      const item = createMockCartItem({ id: 'prod-1' });
       act(() => {
-        useCartStore.getState().addItem(product);
+        useCartStore.getState().addItem(item);
         useCartStore.getState().updateQuantity('nonexistent', 5);
       });
 
@@ -159,12 +159,12 @@ describe('Cart Store Integration', () => {
 
   describe('Clearing cart', () => {
     it('empties the cart', () => {
-      const product1 = createMockProduct({ id: 'prod-1' });
-      const product2 = createMockProduct({ id: 'prod-2' });
+      const item1 = createMockCartItem({ id: 'prod-1' });
+      const item2 = createMockCartItem({ id: 'prod-2' });
 
       act(() => {
-        useCartStore.getState().addItem(product1);
-        useCartStore.getState().addItem(product2);
+        useCartStore.getState().addItem(item1);
+        useCartStore.getState().addItem(item2);
         useCartStore.getState().clearCart();
       });
 
@@ -174,12 +174,12 @@ describe('Cart Store Integration', () => {
 
   describe('Derived selectors', () => {
     it('calculates correct item count', () => {
-      const product1 = createMockProduct({ id: 'prod-1' });
-      const product2 = createMockProduct({ id: 'prod-2' });
+      const item1 = createMockCartItem({ id: 'prod-1' });
+      const item2 = createMockCartItem({ id: 'prod-2' });
 
       act(() => {
-        useCartStore.getState().addItem({ ...product1, quantity: 2 });
-        useCartStore.getState().addItem({ ...product2, quantity: 3 });
+        useCartStore.getState().addItem({ ...item1, quantity: 2 });
+        useCartStore.getState().addItem({ ...item2, quantity: 3 });
       });
 
       const count = useCartStore.getState().itemCount();
@@ -187,12 +187,12 @@ describe('Cart Store Integration', () => {
     });
 
     it('calculates correct subtotal', () => {
-      const product1 = createMockProduct({ id: 'prod-1', priceCents: 1000 });
-      const product2 = createMockProduct({ id: 'prod-2', priceCents: 2000 });
+      const item1 = createMockCartItem({ id: 'prod-1', priceCents: 1000 });
+      const item2 = createMockCartItem({ id: 'prod-2', priceCents: 2000 });
 
       act(() => {
-        useCartStore.getState().addItem({ ...product1, quantity: 2 });
-        useCartStore.getState().addItem({ ...product2, quantity: 1 });
+        useCartStore.getState().addItem({ ...item1, quantity: 2 });
+        useCartStore.getState().addItem({ ...item2, quantity: 1 });
       });
 
       const subtotal = useCartStore.getState().subtotalCents();
@@ -200,10 +200,10 @@ describe('Cart Store Integration', () => {
     });
 
     it('correctly identifies item in cart', () => {
-      const product = createMockProduct({ id: 'prod-1' });
+      const item = createMockCartItem({ id: 'prod-1' });
 
       act(() => {
-        useCartStore.getState().addItem(product);
+        useCartStore.getState().addItem(item);
       });
 
       expect(useCartStore.getState().hasItem('prod-1')).toBe(true);
@@ -211,29 +211,29 @@ describe('Cart Store Integration', () => {
     });
 
     it('retrieves item by id', () => {
-      const product = createMockProduct({ id: 'prod-1', name: 'Test Product' });
+      const item = createMockCartItem({ id: 'prod-1', name: 'Test Product' });
 
       act(() => {
-        useCartStore.getState().addItem(product);
+        useCartStore.getState().addItem(item);
       });
 
-      const item = useCartStore.getState().getItem('prod-1');
-      expect(item?.name).toBe('Test Product');
+      const cartItem = useCartStore.getState().getItem('prod-1');
+      expect(cartItem?.name).toBe('Test Product');
       expect(useCartStore.getState().getItem('nonexistent')).toBeUndefined();
     });
   });
 
   describe('Complex scenarios', () => {
     it('handles mixed add/remove/update operations', () => {
-      const product1 = createMockProduct({ id: 'prod-1', priceCents: 1000 });
-      const product2 = createMockProduct({ id: 'prod-2', priceCents: 2000 });
+      const item1 = createMockCartItem({ id: 'prod-1', priceCents: 1000 });
+      const item2 = createMockCartItem({ id: 'prod-2', priceCents: 2000 });
 
       act(() => {
-        useCartStore.getState().addItem({ ...product1, quantity: 2 });
-        useCartStore.getState().addItem({ ...product2, quantity: 1 });
+        useCartStore.getState().addItem({ ...item1, quantity: 2 });
+        useCartStore.getState().addItem({ ...item2, quantity: 1 });
         useCartStore.getState().updateQuantity('prod-1', 3);
         useCartStore.getState().removeItem('prod-2');
-        useCartStore.getState().addItem({ ...product2, quantity: 2 });
+        useCartStore.getState().addItem({ ...item2, quantity: 2 });
       });
 
       const state = useCartStore.getState();
@@ -243,10 +243,10 @@ describe('Cart Store Integration', () => {
     });
 
     it('persists state across selectors', () => {
-      const product = createMockProduct({ id: 'prod-1', priceCents: 1999 });
+      const item = createMockCartItem({ id: 'prod-1', priceCents: 1999 });
 
       act(() => {
-        useCartStore.getState().addItem({ ...product, quantity: 2 });
+        useCartStore.getState().addItem({ ...item, quantity: 2 });
       });
 
       const state = useCartStore.getState();

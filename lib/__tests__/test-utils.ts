@@ -19,12 +19,28 @@ export const createMockProduct = (overrides = {}) => ({
   slug: 'test-product',
   description: 'Test Description',
   priceCents: 1999,
+  comparePriceCents: null,
   stockQuantity: 10,
+  lowStockThreshold: 5,
   isPublished: true,
+  isFeatured: false,
   createdAt: new Date(),
   updatedAt: new Date(),
   categoryId: 'cat-1',
   images: [],
+  tags: [],
+  metadata: null,
+  ...overrides,
+});
+
+export const createMockCartItem = (overrides = {}) => ({
+  id: crypto.randomUUID(),
+  slug: 'test-product',
+  name: 'Test Product',
+  imageUrl: null,
+  priceCents: 1999,
+  quantity: 1,
+  stockQuantity: 10,
   ...overrides,
 });
 
@@ -34,8 +50,8 @@ export const createMockOrder = (overrides = {}) => ({
   guestEmail: 'guest@example.com',
   stripeSessionId: 'session_test',
   stripePaymentIntentId: null,
-  orderStatus: 'pending',
-  paymentStatus: 'unpaid',
+  orderStatus: 'pending' as const,
+  paymentStatus: 'unpaid' as const,
   subtotalCents: 1999,
   taxCents: 0,
   shippingCents: 0,
@@ -43,9 +59,21 @@ export const createMockOrder = (overrides = {}) => ({
   totalCents: 1999,
   currency: 'usd',
   shippingAddress: { line1: '', city: '', state: '', postalCode: '', country: '' },
+  metadata: null,
   paidAt: null,
   createdAt: new Date(),
   updatedAt: new Date(),
+  ...overrides,
+});
+
+export const createMockCategory = (overrides = {}) => ({
+  id: crypto.randomUUID(),
+  name: 'Test Category',
+  slug: 'test-category',
+  description: null,
+  imageUrl: null,
+  parentId: null,
+  createdAt: new Date(),
   ...overrides,
 });
 
