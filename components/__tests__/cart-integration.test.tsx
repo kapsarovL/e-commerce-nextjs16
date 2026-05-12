@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach } from 'vitest';
-import { renderHook, act, waitFor } from '@testing-library/react';
+import { act } from '@testing-library/react';
 import { useCartStore } from '@/store/cart';
 import { createMockProduct } from '@/lib/__tests__/test-utils';
 
