@@ -1,9 +1,5 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
-import {
-  createMockProduct,
-  createMockOrder,
-  createMockCategory,
-} from '@/lib/__tests__/test-utils';
+import { createMockProduct, createMockOrder, createMockCategory } from '@/lib/__tests__/test-utils';
 
 // Mock database module
 vi.mock('@/lib/db', () => ({

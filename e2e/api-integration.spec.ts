@@ -70,7 +70,7 @@ test.describe('API Integration', () => {
 
       // Verify product results loaded
       const products = page.locator('[data-testid="product-card"]');
-      const hasResults = await products.count() >= 0;
+      const hasResults = (await products.count()) >= 0;
       expect(hasResults).toBeTruthy();
     }
   });
