@@ -5,7 +5,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 [![Live Demo](https://img.shields.io/badge/demo-live-blue)](https://e-commerce-nextjs16.vercel.app)
 
-![StoreFront Thumbnail](/e-commerce-thumbnail.png)
+![screenshot](/public/e-commerce-thumbnail.png)
 
 ---
 
