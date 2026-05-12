@@ -54,7 +54,7 @@ test.describe('Checkout Flow', () => {
     await page.waitForURL('/products');
 
     // Add first product
-    let addButtons = page.locator('button:has-text("Add to Cart")');
+    const addButtons = page.locator('button:has-text("Add to Cart")');
     await addButtons.first().click();
 
     // Add second product
@@ -111,6 +111,7 @@ test.describe('Checkout Flow', () => {
     await expect(errorMessages).toHaveCount(0); // Form should prevent submission
     // Or check for inline validation
     const emailInput = page.locator('input[name="email"]');
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const hasValidation = await emailInput.evaluate((el: any) => el.required);
     expect(hasValidation).toBe(true);
   });

@@ -47,6 +47,7 @@ test.describe('API Integration', () => {
 
   test('product search API returns results', async ({ page }) => {
     // Monitor API calls
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const responses: any[] = [];
     page.on('response', async response => {
       if (response.url().includes('/api/products') || response.url().includes('/api/search')) {
@@ -87,7 +88,7 @@ test.describe('API Integration', () => {
 
       // Verify cart badge shows item
       const cartBadge = page.locator('[data-testid="cart-badge"]');
-      const hasItem = await cartBadge.isVisible().catch(() => false);
+      await cartBadge.isVisible().catch(() => false);
 
       // Reload page
       await page.reload();
@@ -128,7 +129,7 @@ test.describe('API Integration', () => {
 });
 
 test.describe('Real-time Stock Updates', () => {
-  test('product stock updates when other user purchases', async ({ page, context }) => {
+  test('product stock updates when other user purchases', async ({ page }) => {
     // Open product detail page
     await page.goto('/products');
     const productLink = page.locator('[data-testid="product-card"] a').first();
@@ -138,7 +139,7 @@ test.describe('Real-time Stock Updates', () => {
 
       // Get initial stock
       const stockText = page.locator('[data-testid="stock-badge"]');
-      const initialStock = await stockText.textContent().catch(() => null);
+      await stockText.textContent().catch(() => null);
 
       // Simulate time passing (in real scenario, other user purchases)
       await page.waitForTimeout(1000);

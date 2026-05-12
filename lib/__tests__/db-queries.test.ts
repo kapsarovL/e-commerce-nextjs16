@@ -65,6 +65,7 @@ describe('Database Queries', () => {
 
     it('returns null when product not found', async () => {
       const { db } = await import('@/lib/db');
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       vi.mocked(db.query.products.findFirst).mockResolvedValueOnce(null as any);
 
       const product = await db.query.products.findFirst();
@@ -118,6 +119,7 @@ describe('Database Queries', () => {
 
     it('returns null when order not found', async () => {
       const { db } = await import('@/lib/db');
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       vi.mocked(db.query.orders.findFirst).mockResolvedValueOnce(null as any);
 
       const order = await db.query.orders.findFirst();
@@ -159,6 +161,7 @@ describe('Database Queries', () => {
   describe('Cache Invalidation', () => {
     it('invalidates product cache', async () => {
       const mod = await import('@/lib/db/invalidate');
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const invalidateProduct = vi.mocked((mod as any).invalidateProduct);
       await invalidateProduct('prod-1');
       expect(invalidateProduct).toHaveBeenCalledWith('prod-1');
@@ -166,6 +169,7 @@ describe('Database Queries', () => {
 
     it('invalidates inventory cache for slugs', async () => {
       const mod = await import('@/lib/db/invalidate');
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const invalidateInventory = vi.mocked((mod as any).invalidateInventory);
       await invalidateInventory(['product-1', 'product-2']);
       expect(invalidateInventory).toHaveBeenCalledWith(['product-1', 'product-2']);

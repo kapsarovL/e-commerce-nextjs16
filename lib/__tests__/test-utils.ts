@@ -77,7 +77,7 @@ export const createMockCategory = (overrides = {}) => ({
   ...overrides,
 });
 
-export const createMockCheckoutSession = (overrides = {}) => ({
+export const createMockCheckoutSession = (overrides: Record<string, unknown> = {}) => ({
   id: 'cs_test_' + Math.random().toString(36).substring(7),
   object: 'checkout.session',
   payment_status: 'unpaid',
@@ -85,11 +85,13 @@ export const createMockCheckoutSession = (overrides = {}) => ({
   mode: 'payment' as const,
   customer: null,
   customer_email: 'guest@example.com',
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   customer_creation: null as any,
   metadata: { dbUserId: '', guestEmail: 'guest@example.com', itemCount: '1' },
   amount_total: 1999,
   currency: 'usd',
   total_details: { amount_tax: 0, amount_discount: 0, amount_shipping: 0 },
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   line_items: { object: 'list', data: [], has_more: false, url: '' } as any,
   ...overrides,
 });
