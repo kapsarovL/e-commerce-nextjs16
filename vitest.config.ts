@@ -9,11 +9,12 @@ export default defineConfig({
     setupFiles: ['./vitest.setup.ts'],
     globals: true,
     passWithNoTests: true,
+    exclude: ['e2e/**', 'node_modules/**', '.next/**'],
     coverage: {
       provider: 'v8',
       reporter: ['text', 'lcov', 'html'],
       thresholds: { lines: 20, functions: 20, branches: 20, statements: 20 },
-      exclude: ['node_modules/**', '.next/**', 'drizzle/**', '**/*.config.*', '**/types/**'],
+      exclude: ['node_modules/**', '.next/**', 'drizzle/**', '**/*.config.*', '**/types/**', 'e2e/**'],
     },
   },
   resolve: {
