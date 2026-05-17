@@ -23,9 +23,6 @@ importers:
       '@neondatabase/serverless':
         specifier: ^1.0.2
         version: 1.0.2
-      '@stripe/stripe-js':
-        specifier: ^8.11.0
-        version: 8.11.0
       '@uploadthing/react':
         specifier: ^7.3.3
         version: 7.3.3(next@16.2.6(@babel/core@7.29.0)(@playwright/test@1.60.0)(babel-plugin-react-compiler@19.1.0-rc.3)(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(react@19.2.4)(uploadthing@7.7.4(express@5.2.1)(next@16.2.6(@babel/core@7.29.0)(@playwright/test@1.60.0)(babel-plugin-react-compiler@19.1.0-rc.3)(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(tailwindcss@4.2.2))
@@ -38,9 +35,6 @@ importers:
       '@vercel/analytics':
         specifier: ^2.0.1
         version: 2.0.1(next@16.2.6(@babel/core@7.29.0)(@playwright/test@1.60.0)(babel-plugin-react-compiler@19.1.0-rc.3)(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(react@19.2.4)
-      babel-plugin-react-compiler:
-        specifier: ^19.1.0-rc.3
-        version: 19.1.0-rc.3
       class-variance-authority:
         specifier: ^0.7.1
         version: 0.7.1
@@ -59,9 +53,6 @@ importers:
       drizzle-zod:
         specifier: ^0.8.3
         version: 0.8.3(drizzle-orm@0.45.2(@neondatabase/serverless@1.0.2)(@types/pg@8.18.0)(@upstash/redis@1.37.0))(zod@4.3.6)
-      eslint:
-        specifier: 10.2.0
-        version: 10.2.0(jiti@2.6.1)
       immer:
         specifier: ^11.1.4
         version: 11.1.4
@@ -86,9 +77,6 @@ importers:
       react-error-boundary:
         specifier: 6.1.1
         version: 6.1.1(react@19.2.4)
-      shadcn:
-        specifier: ^4.1.2
-        version: 4.3.0(@types/node@20.19.37)(typescript@5.9.3)
       sonner:
         specifier: ^2.0.7
         version: 2.0.7(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
@@ -180,12 +168,18 @@ importers:
       '@vitest/coverage-v8':
         specifier: ^4.1.2
         version: 4.1.2(vitest@4.1.2(@types/node@20.19.37)(jsdom@28.1.0(@noble/hashes@1.8.0))(msw@2.12.11(@types/node@20.19.37)(typescript@5.9.3))(vite@8.0.8(@types/node@20.19.37)(esbuild@0.27.4)(jiti@2.6.1)(terser@5.47.1)(tsx@4.21.0)))
+      babel-plugin-react-compiler:
+        specifier: ^19.1.0-rc.3
+        version: 19.1.0-rc.3
       bundlewatch:
         specifier: ^0.4.2
         version: 0.4.2
       drizzle-kit:
         specifier: ^0.31.10
         version: 0.31.10
+      eslint:
+        specifier: ^10
+        version: 10.2.0(jiti@2.6.1)
       eslint-config-next:
         specifier: 16.2.1
         version: 16.2.1(@typescript-eslint/parser@8.57.2(eslint@10.2.0(jiti@2.6.1))(typescript@5.9.3))(eslint@10.2.0(jiti@2.6.1))(typescript@5.9.3)
@@ -213,6 +207,9 @@ importers:
       prettier-plugin-tailwindcss:
         specifier: ^0.7.1
         version: 0.7.2(prettier@3.8.1)
+      shadcn:
+        specifier: ^4.1.2
+        version: 4.3.0(@types/node@20.19.37)(typescript@5.9.3)
       sharp:
         specifier: ^0.34.5
         version: 0.34.5
@@ -2058,10 +2055,6 @@ packages:
 
   '@standard-schema/spec@1.1.0':
     resolution: {integrity: sha512-l2aFy5jALhniG5HgqrD6jXLi/rUWrKvqN/qJx6yoJsgKhblVd+iqqU4RCXavm/jPityDo5TCvKMnpjKnOriy0w==}
-
-  '@stripe/stripe-js@8.11.0':
-    resolution: {integrity: sha512-3fVF4z3efsgwgyj64nFK+6F4/vMw0mUXD2TBbOfftJtKVNx4JNv3CSfe1fY4DCtCk0JFp8/YPNcRkzgV0HJ8cg==}
-    engines: {node: '>=12.16'}
 
   '@swc/helpers@0.5.15':
     resolution: {integrity: sha512-JQ5TuMi45Owi4/BIMAJBoSQoOJu12oOk/gADqlcUL9JEdHB8vyjUSsxqeNXnmXHjYKMi2WcYtezGEEhqUI/E2g==}
@@ -7586,8 +7579,6 @@ snapshots:
   '@standard-schema/spec@1.0.0-beta.4': {}
 
   '@standard-schema/spec@1.1.0': {}
-
-  '@stripe/stripe-js@8.11.0': {}
 
   '@swc/helpers@0.5.15':
     dependencies:
