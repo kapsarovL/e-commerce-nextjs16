@@ -1,12 +1,16 @@
 // Server Component — reads from Neon directly, no client JS
 import { getP75Vitals } from '@/lib/vitals-db';
 
-function formatValue(name: string, value: number): string {
+export const dynamic = 'force-dynamic';
+
+function formatValue(name: string, value: number | null): string {
+  if (value === null) return '—';
   if (name === 'CLS') return value.toFixed(3);
   return `${Math.round(value)}ms`;
 }
 
-function getRatingColor(rating: string): React.CSSProperties {
+function getRatingColor(rating: string | null): React.CSSProperties {
+  if (!rating) return { color: 'var(--color-text-tertiary)' };
   return {
     color:
       rating === 'good'

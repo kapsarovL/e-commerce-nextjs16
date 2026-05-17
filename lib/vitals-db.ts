@@ -45,8 +45,8 @@ export async function insertVital(vital: VitalInput): Promise<void> {
 
 interface VitalSummary {
   name: string;
-  p75: number;
-  rating: string;
+  p75: number | null;
+  rating: string | null;
   sampleCount: number;
 }
 
