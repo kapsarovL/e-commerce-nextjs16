@@ -1,6 +1,6 @@
 import { clerkMiddleware } from '@clerk/nextjs/server';
 import { NextResponse } from 'next/server';
-import type { NextRequest } from 'next/server';
+import type { NextFetchEvent, NextRequest } from 'next/server';
 
 function generateNonce(): string {
   const bytes = new Uint8Array(16);
@@ -46,8 +46,8 @@ const clerkHandler = clerkMiddleware((_auth, req: NextRequest) => {
   return response;
 });
 
-export function proxy(request: NextRequest): ReturnType<typeof clerkHandler> {
-  return clerkHandler(request);
+export function proxy(request: NextRequest, event: NextFetchEvent): ReturnType<typeof clerkHandler> {
+  return clerkHandler(request, event);
 }
 
 export const config = {
