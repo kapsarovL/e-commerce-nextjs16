@@ -1,25 +1,22 @@
 import 'server-only';
 
 import { neon } from '@neondatabase/serverless';
-import { z } from 'zod';
 
 const sql = neon(process.env.DATABASE_URL!);
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
-const VitalSchema = z.object({
-  name: z.enum(['CLS', 'INP', 'LCP']),
-  value: z.number(),
-  rating: z.enum(['good', 'needs-improvement', 'poor']),
-  delta: z.number(),
-  id: z.string(),
-  navigationType: z.string(),
-  pathname: z.string(),
-  deviceType: z.enum(['desktop', 'mobile', 'tablet']),
-  connection: z.string(),
-});
-
-type VitalInput = z.infer<typeof VitalSchema>;
+interface VitalInput {
+  name: 'CLS' | 'INP' | 'LCP';
+  value: number;
+  rating: 'good' | 'needs-improvement' | 'poor';
+  delta: number;
+  id: string;
+  navigationType: string;
+  pathname: string;
+  deviceType: 'desktop' | 'mobile' | 'tablet';
+  connection: string;
+}
 
 // ─── Insert with upsert ───────────────────────────────────────────────────────
 
