@@ -1,20 +1,18 @@
-// Type-safe wrapper — scheduler API is not yet in TypeScript's lib.dom.d.ts
+// Type-safe wrapper for the Scheduler API
+// The scheduler API is available in modern browsers via window.scheduler.postTask()
+// Falls back to setTimeout(0) in older browsers.
 
-type TaskPriority = 'user-blocking' | 'user-visible' | 'background';
-
-interface SchedulerTask {
-  priority: TaskPriority;
-  signal?: AbortSignal;
-  delay?: number;
-}
-
-// Extend the global scheduler type
+// Declare the scheduler API for type safety (Scheduler API spec)
 declare global {
-  interface Window {
-    scheduler?: {
-      postTask<T>(callback: () => T | Promise<T>, options?: SchedulerTask): Promise<T>;
-      yield(): Promise<void>;
-    };
+  interface Scheduler {
+    postTask<T>(callback: () => T | Promise<T>, options?: SchedulerPostTaskOptions): Promise<T>;
+    yield(): Promise<void>;
+  }
+
+  interface SchedulerPostTaskOptions {
+    priority?: 'user-blocking' | 'user-visible' | 'background';
+    signal?: AbortSignal;
+    delay?: number;
   }
 }
 
@@ -22,12 +20,13 @@ declare global {
 
 export async function postTask<T>(
   callback: () => T | Promise<T>,
-  options: SchedulerTask = { priority: 'user-visible' },
+  options?: SchedulerPostTaskOptions,
 ): Promise<T> {
   // scheduler.postTask is available in Chrome 94+, Edge 94+.
   // Firefox and Safari: fall back to setTimeout(0) which still yields.
-  if (typeof window !== 'undefined' && window.scheduler?.postTask) {
-    return window.scheduler.postTask(callback, options);
+  const scheduler = (globalThis as unknown as typeof globalThis & { scheduler: Scheduler }).scheduler;
+  if (scheduler?.postTask) {
+    return scheduler.postTask(callback, options);
   }
 
   // Polyfill: yield via a 0ms timeout then run synchronously.
@@ -48,8 +47,9 @@ export async function postTask<T>(
 // Use inside a loop to break a long computation into browser-friendly chunks.
 
 export async function yieldToMain(): Promise<void> {
-  if (typeof window !== 'undefined' && window.scheduler?.yield) {
-    return window.scheduler.yield();
+  const scheduler = (globalThis as unknown as typeof globalThis & { scheduler: Scheduler }).scheduler;
+  if (scheduler?.yield) {
+    return scheduler.yield();
   }
   return new Promise<void>(resolve => setTimeout(resolve, 0));
 }
