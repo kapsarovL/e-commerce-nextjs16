@@ -18,10 +18,7 @@ declare global {
 
 // ─── Typed postTask wrapper ───────────────────────────────────────────────────
 
-export async function postTask<T>(
-  callback: () => T | Promise<T>,
-  options?: SchedulerPostTaskOptions,
-): Promise<T> {
+export async function postTask<T>(callback: () => T | Promise<T>, options?: SchedulerPostTaskOptions): Promise<T> {
   // scheduler.postTask is available in Chrome 94+, Edge 94+.
   // Firefox and Safari: fall back to setTimeout(0) which still yields.
   const sched = (globalThis as typeof globalThis & { scheduler?: Scheduler }).scheduler;
