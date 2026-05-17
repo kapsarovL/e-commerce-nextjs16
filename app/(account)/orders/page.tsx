@@ -11,6 +11,7 @@ import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
   title: 'My orders',
+  description: 'View and track your order history and delivery status.',
   robots: { index: false },
 };
 
