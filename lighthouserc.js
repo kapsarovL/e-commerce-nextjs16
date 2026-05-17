@@ -2,7 +2,7 @@
 // Runs locally too: lhci autorun
 
 /** @type {import('@lhci/cli').LhciConfig} */
-module.exports = {
+export default {
   ci: {
     collect: {
       // Start the Next.js production server.
