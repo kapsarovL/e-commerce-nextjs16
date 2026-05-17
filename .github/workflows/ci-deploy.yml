@@ -81,13 +81,13 @@ jobs:
           echo "VERCEL_PROJECT_ID=$(printf '%s' '${{ secrets.VERCEL_PROJECT_ID }}')" >> $GITHUB_ENV
 
       - name: Pull Vercel environment
-        run: vercel pull --yes --environment=production --token='$VERCEL_TOKEN'
+        run: vercel pull --yes --environment=production --token="$VERCEL_TOKEN"
         env:
           VERCEL_ORG_ID: ${{ env.VERCEL_ORG_ID }}
           VERCEL_PROJECT_ID: ${{ env.VERCEL_PROJECT_ID }}
 
       - name: Build project
-        run: vercel build --prod --token='$VERCEL_TOKEN'
+        run: vercel build --prod --token="$VERCEL_TOKEN"
         env:
           VERCEL_ORG_ID: ${{ env.VERCEL_ORG_ID }}
           VERCEL_PROJECT_ID: ${{ env.VERCEL_PROJECT_ID }}
@@ -95,7 +95,7 @@ jobs:
       - name: Deploy to production
         id: deploy
         run: |
-          url=$(vercel deploy --prebuilt --prod --token='$VERCEL_TOKEN')
+          url=$(vercel deploy --prebuilt --prod --token="$VERCEL_TOKEN")
           echo "url=$url" >> $GITHUB_OUTPUT
         env:
           VERCEL_ORG_ID: ${{ env.VERCEL_ORG_ID }}
