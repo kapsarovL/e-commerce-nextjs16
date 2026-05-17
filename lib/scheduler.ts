@@ -2,7 +2,7 @@
 // The scheduler API is available in modern browsers via window.scheduler.postTask()
 // Falls back to setTimeout(0) in older browsers.
 
-// Declare the scheduler API for type safety (Scheduler API spec)
+// Declare the scheduler API options for type safety (Scheduler API spec)
 declare global {
   interface Scheduler {
     postTask<T>(callback: () => T | Promise<T>, options?: SchedulerPostTaskOptions): Promise<T>;
@@ -14,6 +14,10 @@ declare global {
     signal?: AbortSignal;
     delay?: number;
   }
+
+  interface GlobalThis {
+    scheduler?: Scheduler;
+  }
 }
 
 // ─── Typed postTask wrapper ───────────────────────────────────────────────────
@@ -24,9 +28,8 @@ export async function postTask<T>(
 ): Promise<T> {
   // scheduler.postTask is available in Chrome 94+, Edge 94+.
   // Firefox and Safari: fall back to setTimeout(0) which still yields.
-  const scheduler = (globalThis as unknown as typeof globalThis & { scheduler: Scheduler }).scheduler;
-  if (scheduler?.postTask) {
-    return scheduler.postTask(callback, options);
+  if (globalThis.scheduler?.postTask) {
+    return globalThis.scheduler.postTask(callback, options);
   }
 
   // Polyfill: yield via a 0ms timeout then run synchronously.
@@ -47,9 +50,8 @@ export async function postTask<T>(
 // Use inside a loop to break a long computation into browser-friendly chunks.
 
 export async function yieldToMain(): Promise<void> {
-  const scheduler = (globalThis as unknown as typeof globalThis & { scheduler: Scheduler }).scheduler;
-  if (scheduler?.yield) {
-    return scheduler.yield();
+  if (globalThis.scheduler?.yield) {
+    return globalThis.scheduler.yield();
   }
   return new Promise<void>(resolve => setTimeout(resolve, 0));
 }
