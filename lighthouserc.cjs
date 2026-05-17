@@ -54,7 +54,7 @@ module.exports = {
     assert: {
       assertions: {
         // Performance score floor — catches general regressions.
-        'categories:performance': ['error', { minScore: 0.7 }],
+        'categories:performance': ['error', { minScore: 0.9 }],
 
         // These are LHCI's own numeric assertions.
         // Our script provides the precise LCP/CLS block with better output.
