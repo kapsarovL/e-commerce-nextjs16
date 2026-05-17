@@ -1,0 +1,143 @@
+name: Bundle budget
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'app/**'
+      - 'components/**'
+      - 'lib/**'
+      - 'package.json'
+      - 'pnpm-lock.yaml'
+
+concurrency:
+  group: bundle-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  bundle:
+    name: Check bundle budgets
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Get pnpm store path
+        id: pnpm-cache
+        run: echo "STORE_PATH=$(pnpm store path)" >> $GITHUB_OUTPUT
+
+      - uses: actions/cache@v4
+        with:
+          path: ${{ steps.pnpm-cache.outputs.STORE_PATH }}
+          key: pnpm-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}
+          restore-keys: pnpm-${{ runner.os }}-
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      # Production build required — dev build has no optimisation.
+      # Bundle sizes in dev are meaningless (no tree-shaking, no minification).
+      - name: Build
+        run: pnpm build
+        env:
+          NODE_ENV: production
+
+      # ── size-limit: the hard gate ─────────────────────────────────────────
+      # Exit code 1 if any budget is exceeded — blocks merge.
+      - name: Check size budgets (size-limit)
+        run: pnpm size-limit --json > size-limit-results.json
+        # --json: outputs machine-readable results for the annotation step
+
+      # Post size-limit results as a PR annotation (not a comment — cleaner)
+      - name: Annotate PR with size-limit results
+        if: always()
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const fs = require('fs');
+            const results = JSON.parse(
+              fs.readFileSync('size-limit-results.json', 'utf8')
+            );
+
+            const rows = results.map(r => {
+              const pct = ((r.size / r.sizeLimit) * 100).toFixed(0);
+              const status = r.passed ? '✅' : '❌';
+              const bar = '█'.repeat(Math.min(Math.round(pct / 10), 10));
+              return `| ${status} | \`${r.name}\` | ${(r.size / 1024).toFixed(1)} kB | ${(r.sizeLimit / 1024).toFixed(1)} kB | ${pct}% ${bar} |`;
+            }).join('\n');
+
+            const allPassed = results.every(r => r.passed);
+            const header = allPassed
+              ? '## Bundle budgets ✅ All within limits'
+              : '## Bundle budgets ❌ One or more budgets exceeded';
+
+            const body = `${header}
+
+            | | Chunk | Size | Limit | Usage |
+            |---|---|---|---|---|
+            ${rows}
+
+            > Sizes are gzipped. Limits set in \`package.json\` size-limit config.`;
+
+            // Upsert comment — replace existing instead of spamming
+            const { data: comments } = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+            });
+
+            const existing = comments.find(c =>
+              c.user.login === 'github-actions[bot]' &&
+              c.body.includes('Bundle budgets')
+            );
+
+            if (existing) {
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: existing.id,
+                body,
+              });
+            } else {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body,
+              });
+            }
+
+      # ── bundlewatch: per-chunk visibility ────────────────────────────────
+      # Runs after size-limit regardless of pass/fail — gives chunk detail.
+      - name: Run bundlewatch
+        if: always()
+        run: pnpm bundlewatch
+        env:
+          BUNDLEWATCH_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          CI_REPO_OWNER: ${{ github.repository_owner }}
+          CI_REPO_NAME: ${{ github.event.repository.name }}
+          CI_BRANCH: ${{ github.head_ref }}
+          CI_BRANCH_BASE: ${{ github.base_ref }}
+          CI_COMMIT_SHA: ${{ github.event.pull_request.head.sha }}
+
+      # Upload build artifacts — lets you download and inspect locally
+      - name: Upload bundle artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: bundle-analysis-${{ github.run_id }}
+          path: |
+            .next/static/chunks/
+            size-limit-results.json
+          retention-days: 7
