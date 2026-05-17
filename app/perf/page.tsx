@@ -1,6 +1,8 @@
 // Server Component — reads from Neon directly, no client JS
 import { getP75Vitals } from '@/lib/vitals-db';
 
+export const dynamic = 'force-dynamic';
+
 function formatValue(name: string, value: number | null): string {
   if (value === null) return '—';
   if (name === 'CLS') return value.toFixed(3);
