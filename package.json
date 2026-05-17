@@ -110,5 +110,37 @@
       "postcss": ">=8.5.10",
       "ip-address": ">=10.1.1"
     }
-  }
+  },
+  "size-limit": [
+    {
+      "name": "Main bundle",
+      "path": ".next/static/chunks/main-*.js",
+      "limit": "80 kB",
+      "gzip": true
+    },
+    {
+      "name": "Framework chunk",
+      "path": ".next/static/chunks/framework-*.js",
+      "limit": "50 kB",
+      "gzip": true
+    },
+    {
+      "name": "App shell",
+      "path": ".next/static/chunks/pages/_app-*.js",
+      "limit": "20 kB",
+      "gzip": true
+    },
+    {
+      "name": "Home page",
+      "path": ".next/static/chunks/pages/index-*.js",
+      "limit": "30 kB",
+      "gzip": true
+    },
+    {
+      "name": "Checkout page",
+      "path": ".next/static/chunks/pages/checkout-*.js",
+      "limit": "40 kB",
+      "gzip": true
+    }
+  ]
 }

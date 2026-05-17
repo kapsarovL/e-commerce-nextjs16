@@ -1,0 +1,24 @@
+{
+  "files": [
+    {
+      "path": ".next/static/chunks/*.js",
+      "maxSize": "100 kB",
+
+      "compression": "gzip"
+    },
+    {
+      "path": ".next/static/chunks/pages/*.js",
+      "maxSize": "50 kB",
+      "compression": "gzip"
+    },
+    {
+      "path": ".next/static/css/*.css",
+      "maxSize": "20 kB",
+      "compression": "gzip"
+    }
+  ],
+
+  "bundlewatchServiceHost": "https://service.bundlewatch.io",
+
+  "normalizedFilenames": true
+}
