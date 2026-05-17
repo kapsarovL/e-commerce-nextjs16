@@ -55,7 +55,7 @@ export function CartSummary() {
             <li key={item.id} className="flex gap-4 py-5">
               {/* Thumbnail */}
               <Link href={`/products/${item.slug}`} className="shrink-0">
-                <div className="bg-muted relative h-20 w-20 overflow-hidden rounded-xl">
+                <div className="bg-muted h-20 w-20 overflow-hidden rounded-xl" style={{ position: 'relative' }}>
                   {item.imageUrl ? (
                     <Image src={item.imageUrl} alt={item.name} fill sizes="80px" className="object-cover" />
                   ) : (

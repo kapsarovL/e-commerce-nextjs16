@@ -18,7 +18,7 @@ export function CartItem({ item }: CartItemProps) {
     <div className="flex gap-3">
       {/* Thumbnail */}
       <Link href={`/products/${item.slug}`} className="shrink-0">
-        <div className="bg-muted relative h-16 w-16 overflow-hidden rounded-lg">
+        <div className="bg-muted h-16 w-16 overflow-hidden rounded-lg" style={{ position: 'relative' }}>
           {item.imageUrl ? (
             <Image src={item.imageUrl} alt={item.name} fill sizes="64px" className="object-cover" />
           ) : (

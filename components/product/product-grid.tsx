@@ -41,7 +41,7 @@ function ProductCard({ product }: { product: Product }) {
   return (
     <div className="border-border bg-card group flex flex-col overflow-hidden rounded-xl border transition-shadow hover:shadow-md">
       {/* Image */}
-      <div className="bg-muted relative aspect-square overflow-hidden">
+      <div className="bg-muted aspect-square overflow-hidden" style={{ position: 'relative' }}>
         <Link href={`/products/${product.slug}`} className="block h-full w-full">
           {primaryImage ? (
             <Image
