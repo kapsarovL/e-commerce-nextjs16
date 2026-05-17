@@ -1,6 +1,54 @@
 import { clerkMiddleware } from '@clerk/nextjs/server';
+import { NextResponse } from 'next/server';
+import type { NextRequest } from 'next/server';
 
-export default clerkMiddleware();
+function generateNonce(): string {
+  const bytes = new Uint8Array(16);
+  crypto.getRandomValues(bytes);
+  return btoa(String.fromCharCode(...bytes));
+}
+
+function buildCsp(nonce: string): string {
+  return [
+    "default-src 'self'",
+    // nonce authorizes first-party scripts; strict-dynamic propagates that
+    // trust to scripts they load (e.g. GTM loading its own tags).
+    // https fallback keeps older browsers from blocking everything.
+    `script-src 'nonce-${nonce}' 'strict-dynamic' https:`,
+    // Next.js and Tailwind inject inline styles; unsafe-inline is safe for
+    // styles because CSS cannot exfiltrate data the way scripts can.
+    "style-src 'self' 'unsafe-inline'",
+    "img-src 'self' data: blob: https://images.unsplash.com https://img.clerk.com",
+    "font-src 'self'",
+    "connect-src 'self' https://*.clerk.accounts.dev https://clerk.com https://vitals.vercel-insights.com https://www.google-analytics.com https://www.googletagmanager.com",
+    "frame-src 'self' https://*.clerk.accounts.dev",
+    // Clerk uses blob: web workers internally
+    "worker-src blob:",
+    "object-src 'none'",
+    "base-uri 'self'",
+    "form-action 'self'",
+    "report-uri /api/csp-report",
+  ].join('; ');
+}
+
+const clerkHandler = clerkMiddleware((_auth, req: NextRequest) => {
+  const nonce = generateNonce();
+
+  const requestHeaders = new Headers(req.headers);
+  requestHeaders.set('x-nonce', nonce);
+
+  const response = NextResponse.next({
+    request: { headers: requestHeaders },
+  });
+
+  response.headers.set('Content-Security-Policy-Report-Only', buildCsp(nonce));
+
+  return response;
+});
+
+export function proxy(request: NextRequest): ReturnType<typeof clerkHandler> {
+  return clerkHandler(request);
+}
 
 export const config = {
   matcher: [
