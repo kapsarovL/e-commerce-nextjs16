@@ -1,11 +1,15 @@
 import { notFound } from 'next/navigation';
+import dynamic from 'next/dynamic';
+import { Suspense } from 'react';
 import { db } from '@/lib/db';
 import { products } from '@/lib/db/schema';
 import { eq } from 'drizzle-orm';
 import { formatPrice } from '@/lib/utils';
 import Image from 'next/image';
 import type { Metadata } from 'next';
-import { AddToCartButton } from '@/components/cart/add-to-cart-button';
+import { Button } from '@/components/ui/button';
+
+const AddToCartButton = dynamic(() => import('@/components/cart/add-to-cart-button').then(mod => ({ default: mod.AddToCartButton })), { ssr: false });
 
 export const revalidate = 3600; // Revalidate every hour
 
@@ -70,16 +74,18 @@ export default async function ProductPage({ params }: ProductPageProps) {
 
           {product.description && <p className="text-muted-foreground leading-relaxed">{product.description}</p>}
 
-          <AddToCartButton
-            product={{
-              id: product.id,
-              slug: product.slug,
-              name: product.name,
-              imageUrl: primaryImage?.url ?? null,
-              priceCents: product.priceCents,
-              stockQuantity: product.stockQuantity,
-            }}
-          />
+          <Suspense fallback={<Button disabled className="w-full">Loading...</Button>}>
+            <AddToCartButton
+              product={{
+                id: product.id,
+                slug: product.slug,
+                name: product.name,
+                imageUrl: primaryImage?.url ?? null,
+                priceCents: product.priceCents,
+                stockQuantity: product.stockQuantity,
+              }}
+            />
+          </Suspense>
         </div>
       </div>
     </div>
