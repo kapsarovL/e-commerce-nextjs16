@@ -76,9 +76,9 @@ jobs:
 
       - name: Clean environment variables
         run: |
-          echo "VERCEL_TOKEN=$(echo '${{ secrets.VERCEL_TOKEN }}' | xargs)" >> $GITHUB_ENV
-          echo "VERCEL_ORG_ID=$(echo '${{ secrets.VERCEL_ORG_ID }}' | xargs)" >> $GITHUB_ENV
-          echo "VERCEL_PROJECT_ID=$(echo '${{ secrets.VERCEL_PROJECT_ID }}' | xargs)" >> $GITHUB_ENV
+          echo "VERCEL_TOKEN=$(printf '%s' '${{ secrets.VERCEL_TOKEN }}')" >> $GITHUB_ENV
+          echo "VERCEL_ORG_ID=$(printf '%s' '${{ secrets.VERCEL_ORG_ID }}')" >> $GITHUB_ENV
+          echo "VERCEL_PROJECT_ID=$(printf '%s' '${{ secrets.VERCEL_PROJECT_ID }}')" >> $GITHUB_ENV
 
       - name: Pull Vercel environment
         run: vercel pull --yes --environment=production --token='$VERCEL_TOKEN'
