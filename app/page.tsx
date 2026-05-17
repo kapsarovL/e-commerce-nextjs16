@@ -89,7 +89,7 @@ export default async function HomePage() {
             </div>
 
             <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
-              {featured.map(product => {
+              {featured.map((product, idx) => {
                 const imageUrl = (product.images as { url: string }[] | null)?.[0]?.url ?? null;
                 return (
                   <Link key={product.id} href={`/products/${product.slug}`} className="group flex flex-col gap-3">
@@ -101,6 +101,7 @@ export default async function HomePage() {
                           fill
                           sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
                           className="object-cover transition-transform duration-300 group-hover:scale-105"
+                          priority={idx === 0}
                         />
                       ) : (
                         <div className="bg-muted h-full w-full" />
