@@ -1,6 +1,6 @@
 'use client'
 
-import { useFilteredProducts } from '@/hooks/useFilteredProducts'
+import { useFilteredProducts } from '@/hooks/use-filtered-products'
 import type { Product } from '@/types'
 
 interface Props {
