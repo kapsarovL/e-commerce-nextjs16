@@ -1,91 +1,160 @@
-#!/usr/bin/env node
-import fs from 'fs';
-import path from 'path';
-import { fileURLToPath } from 'url';
+// scripts/assert-vitals.mjs
+// Node 18+ ESM — no dependencies, no transpilation needed.
 
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
+import { readFileSync, readdirSync, existsSync } from 'node:fs'
+import { join } from 'node:path'
+import process from 'node:process'
+
+// ─── Thresholds ───────────────────────────────────────────────────────────────
 
 const THRESHOLDS = {
-  lcp: 2500, // ms
-  cls: 0.1,
-  inp: 200, // ms
-};
-
-const reportDir = path.join(__dirname, '..', '.lighthouseci');
-
-if (!fs.existsSync(reportDir)) {
-  console.error('❌ No Lighthouse reports found at .lighthouseci/');
-  process.exit(1);
+  LCP: {
+    audit: 'largest-contentful-paint',
+    unit: 'ms',
+    good: 2500,
+    poor: 4000,
+    // The hard block: CI fails if any URL exceeds this.
+    failAt: 2500,
+  },
+  CLS: {
+    audit: 'cumulative-layout-shift',
+    unit: 'score',
+    good: 0.1,
+    poor: 0.25,
+    failAt: 0.1,
+  },
+  INP: {
+    audit: 'interaction-to-next-paint',
+    unit: 'ms',
+    good: 200,
+    poor: 500,
+    // INP is advisory here — warn but don't block.
+    // It's unreliable in synthetic lab tests (no real user interaction).
+    failAt: Infinity,
+  },
+  TBT: {
+    audit: 'total-blocking-time',
+    unit: 'ms',
+    good: 200,
+    poor: 600,
+    // TBT is the lab proxy for INP — block on this instead.
+    failAt: 600,
+  },
 }
 
-const reports = fs
-  .readdirSync(reportDir)
-  .filter(f => f.startsWith('lhr-') && f.endsWith('.json'))
-  .map(f => JSON.parse(fs.readFileSync(path.join(reportDir, f), 'utf8')));
+// ─── Helpers ──────────────────────────────────────────────────────────────────
 
-if (reports.length === 0) {
-  console.error('❌ No Lighthouse HTML reports generated');
-  process.exit(1);
+function median(values) {
+  if (!values.length) return 0
+  const sorted = [...values].sort((a, b) => a - b)
+  return sorted[Math.floor(sorted.length / 2)]
 }
 
-// Group reports by URL, extract metrics
-const byUrl = {};
-for (const report of reports) {
-  const url = report.requestedUrl;
-  if (!byUrl[url]) byUrl[url] = [];
-
-  const lcp = report.audits['largest-contentful-paint']?.numericValue ?? null;
-  const cls = report.audits['cumulative-layout-shift']?.numericValue ?? null;
-  const inp = report.audits['interaction-to-next-paint']?.numericValue ?? null;
-
-  byUrl[url].push({ lcp, cls, inp });
+function fmt(value, unit) {
+  if (unit === 'ms') return `${Math.round(value)}ms`
+  return value.toFixed(4)
 }
 
-// Calculate median and check thresholds
-const median = arr => {
-  const sorted = arr.slice().sort((a, b) => a - b);
-  return sorted[Math.floor(sorted.length / 2)];
-};
+function rating(value, good, poor) {
+  if (value <= good) return { label: 'GOOD', symbol: '✅' }
+  if (value < poor) return { label: 'NEEDS IMPROVEMENT', symbol: '⚠️ ' }
+  return { label: 'POOR', symbol: '❌' }
+}
 
-let failed = false;
+// ─── Load reports ─────────────────────────────────────────────────────────────
 
-for (const [url, runs] of Object.entries(byUrl)) {
-  const route = new URL(url).pathname || '/';
-  console.log(`\n📊 ${route}`);
+const REPORT_DIR = '.lighthouseci'
 
-  const lcpValues = runs.map(r => r.lcp).filter(v => v !== null);
-  const clsValues = runs.map(r => r.cls).filter(v => v !== null);
-  const inpValues = runs.map(r => r.inp).filter(v => v !== null);
+if (!existsSync(REPORT_DIR)) {
+  console.error('[assert-vitals] No .lighthouseci directory found.')
+  console.error('Run `lhci autorun` first.')
+  process.exit(1)
+}
 
-  if (lcpValues.length > 0) {
-    const lcpMedian = median(lcpValues);
-    const lcpOk = lcpMedian <= THRESHOLDS.lcp;
-    const icon = lcpOk ? '✅' : '❌';
-    console.log(`  ${icon} LCP: ${Math.round(lcpMedian)}ms (target: ≤${THRESHOLDS.lcp}ms)`);
-    if (!lcpOk) failed = true;
+const reportFiles = readdirSync(REPORT_DIR).filter(
+  (f) => f.startsWith('lhr-') && f.endsWith('.json')
+)
+
+if (!reportFiles.length) {
+  console.error('[assert-vitals] No LHR JSON files found in .lighthouseci/')
+  process.exit(1)
+}
+
+// Group report files by URL
+const byUrl = new Map()
+
+for (const file of reportFiles) {
+  const report = JSON.parse(readFileSync(join(REPORT_DIR, file), 'utf8'))
+  const url = report.requestedUrl
+
+  if (!byUrl.has(url)) byUrl.set(url, [])
+  byUrl.get(url).push(report)
+}
+
+// ─── Assert ───────────────────────────────────────────────────────────────────
+
+let failed = false
+const lines = []
+
+lines.push('')
+lines.push('┌─────────────────────────────────────────────────────────────┐')
+lines.push('│                  Lighthouse CI — Vitals report               │')
+lines.push('└─────────────────────────────────────────────────────────────┘')
+
+for (const [url, reports] of byUrl) {
+  const pathname = new URL(url).pathname
+  lines.push('')
+  lines.push(`  Route: ${pathname}  (${reports.length} run${reports.length > 1 ? 's' : ''})`)
+  lines.push('  ' + '─'.repeat(56))
+
+  for (const [name, cfg] of Object.entries(THRESHOLDS)) {
+    const values = reports.map(
+      (r) => r.audits[cfg.audit]?.numericValue ?? Infinity
+    )
+    const med = median(values)
+    const { label, symbol } = rating(med, cfg.good, cfg.poor)
+    const breached = med > cfg.failAt
+
+    if (breached) failed = true
+
+    const formatted = fmt(med, cfg.unit)
+    const threshold = cfg.failAt === Infinity
+      ? `warn only (lab INP unreliable)`
+      : `fail > ${fmt(cfg.failAt, cfg.unit)}`
+
+    const line = [
+      `  ${symbol}`,
+      name.padEnd(6),
+      formatted.padStart(10),
+      `   ${label.padEnd(20)}`,
+      breached ? '← BLOCKED' : `[${threshold}]`,
+    ].join(' ')
+
+    lines.push(line)
   }
-
-  if (clsValues.length > 0) {
-    const clsMedian = median(clsValues);
-    const clsOk = clsMedian <= THRESHOLDS.cls;
-    const icon = clsOk ? '✅' : '❌';
-    console.log(`  ${icon} CLS: ${clsMedian.toFixed(3)} (target: ≤${THRESHOLDS.cls})`);
-    if (!clsOk) failed = true;
-  }
-
-  if (inpValues.length > 0) {
-    const inpMedian = median(inpValues);
-    const inpOk = inpMedian <= THRESHOLDS.inp;
-    const icon = inpOk ? '✅' : '❌';
-    console.log(`  ${icon} INP: ${Math.round(inpMedian)}ms (target: ≤${THRESHOLDS.inp}ms)`);
-    if (!inpOk) failed = true;
-  }
 }
+
+lines.push('')
 
 if (failed) {
-  console.error('\n❌ Some metrics exceeded thresholds');
-  process.exit(1);
+  lines.push('  ✖ RESULT: FAIL — one or more vitals exceed their threshold.')
+  lines.push('  Fix the issues above and push again.')
+  lines.push('')
+  lines.push('  Debugging tips:')
+  lines.push('  • LCP > 2500ms  → check fetchpriority="high" on LCP image')
+  lines.push('  •               → check render-blocking CSS/scripts in <head>')
+  lines.push('  •               → check TTFB (slow server = high LCP)')
+  lines.push('  • CLS > 0.1     → check images have width + height attributes')
+  lines.push('  •               → check for content injected above the fold')
+  lines.push('  •               → check font-display: swap on web fonts')
+  lines.push('  • TBT > 600ms   → check for large JS bundles (run bundle-analyzer)')
+  lines.push('  •               → check for third-party scripts blocking main thread')
 } else {
-  console.log('\n✅ All metrics within thresholds');
-  process.exit(0);
+  lines.push('  ✔ RESULT: PASS — all vitals within thresholds.')
 }
+
+lines.push('')
+console.log(lines.join('\n'))
+
+// Non-zero exit fails the workflow step, which blocks PR merge.
+process.exit(failed ? 1 : 0)
