@@ -29,7 +29,6 @@ jobs:
     env:
       # Controlled environment — eliminates network variance from P75 scores.
       # LHCI always runs 3 audits per URL; we take the median.
-      LHCI_BUILD_TOKEN: ${{ secrets.LHCI_BUILD_TOKEN }}
       DATABASE_URL: ${{ secrets.DATABASE_URL }}
 
     steps:
