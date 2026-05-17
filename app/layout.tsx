@@ -18,6 +18,9 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: 'StoreFront',
   description: 'A modern e-commerce storefront',
+  verification: {
+    google: 'tTsgaPYqJcPUdJWUFYl6hZufQpIn1VhrHZSB_xY06m8',
+  },
 };
 
 export default function RootLayout({
