@@ -2,13 +2,17 @@
 
 import { useState, useEffect } from 'react';
 import { Suspense } from 'react';
+import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import { ShoppingCart } from 'lucide-react';
 import { UserButton, SignInButton, useUser } from '@clerk/nextjs';
 import { useCartItemCount } from '@/store/cart';
-import { CartDrawer } from '@/components/cart/cart-drawer';
 import { SearchBar } from '@/components/layout/search-bar';
 import { Button } from '@/components/ui/button';
+
+const CartDrawer = dynamic(() => import('@/components/cart/cart-drawer').then(mod => ({ default: mod.CartDrawer })), {
+  loading: () => null,
+});
 
 export function Navbar() {
   const [cartOpen, setCartOpen] = useState(false);
