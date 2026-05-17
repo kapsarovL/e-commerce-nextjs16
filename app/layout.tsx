@@ -32,15 +32,6 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <head>
-        <style>{`
-          * { margin: 0; padding: 0; box-sizing: border-box; }
-          html { -webkit-font-smoothing: antialiased; }
-          body { font-family: var(--font-geist-sans), system-ui, -apple-system, sans-serif; background: #ffffff; color: #1a1a1a; }
-          main { display: block; }
-          img { max-width: 100%; height: auto; display: block; }
-        `}</style>
-      </head>
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         <ClerkProvider>{children}</ClerkProvider>
         <Analytics />

@@ -29,10 +29,10 @@ export default async function HomePage() {
     <>
       <Navbar />
 
-      <main className="min-h-[calc(100vh-3.5rem)]">
+      <main className="min-h-[calc(100vh-3.5rem)] w-full">
         {/* ── Hero ── */}
-        <section className="from-background to-muted/40 bg-linear-to-b">
-          <div className="container mx-auto flex flex-col items-center gap-6 px-4 py-24 text-center md:py-32">
+        <section className="from-background to-muted/40 bg-linear-to-b w-full">
+          <div className="mx-auto flex w-full max-w-7xl flex-col items-center gap-6 px-4 py-24 text-center md:py-32">
             <span className="bg-primary/10 text-primary rounded-full px-3 py-1 text-xs font-medium tracking-wide uppercase">
               New arrivals every week
             </span>
@@ -56,8 +56,8 @@ export default async function HomePage() {
         </section>
 
         {/* ── Perks strip ── */}
-        <section className="border-border border-y">
-          <div className="container mx-auto grid grid-cols-2 divide-x divide-y px-4 sm:grid-cols-4 sm:divide-y-0">
+        <section className="border-border w-full border-y">
+          <div className="mx-auto grid w-full max-w-7xl grid-cols-2 divide-x divide-y px-4 sm:grid-cols-4 sm:divide-y-0">
             {perks.map(({ icon: Icon, label, description }) => (
               <div
                 key={label}
@@ -77,65 +77,67 @@ export default async function HomePage() {
 
         {/* ── Featured products ── */}
         {featured.length > 0 && (
-          <section className="container mx-auto px-4 py-16">
-            <div className="mb-8 flex items-baseline justify-between">
-              <h2 className="text-2xl font-bold tracking-tight">Featured</h2>
-              <Link
-                href="/products?featured=true"
-                className="text-primary hover:text-primary/80 flex items-center gap-1 text-sm font-medium transition-colors"
-              >
-                View all <ArrowRight className="h-3.5 w-3.5" />
-              </Link>
-            </div>
+          <section className="w-full">
+            <div className="mx-auto w-full max-w-7xl px-4 py-16">
+              <div className="mb-8 flex items-baseline justify-between">
+                <h2 className="text-2xl font-bold tracking-tight">Featured</h2>
+                <Link
+                  href="/products?featured=true"
+                  className="text-primary hover:text-primary/80 flex items-center gap-1 text-sm font-medium transition-colors"
+                >
+                  View all <ArrowRight className="h-3.5 w-3.5" />
+                </Link>
+              </div>
 
-            <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
-              {featured.map((product, idx) => {
-                const imageUrl = (product.images as { url: string }[] | null)?.[0]?.url ?? null;
-                return (
-                  <Link key={product.id} href={`/products/${product.slug}`} className="group flex flex-col gap-3">
-                    <div className="bg-muted relative aspect-square overflow-hidden rounded-2xl">
-                      {imageUrl ? (
-                        <Image
-                          src={imageUrl}
-                          alt={product.name}
-                          fill
-                          sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
-                          className="object-cover transition-transform duration-300 group-hover:scale-105"
-                          priority={idx === 0}
-                        />
-                      ) : (
-                        <div className="bg-muted h-full w-full" />
-                      )}
-                      {product.comparePriceCents && product.comparePriceCents > product.priceCents && (
-                        <span className="bg-destructive text-destructive-foreground absolute top-2 left-2 rounded-full px-2 py-0.5 text-[10px] font-semibold">
-                          Sale
-                        </span>
-                      )}
-                    </div>
-                    <div>
-                      <p className="text-foreground line-clamp-2 text-sm font-medium group-hover:underline">
-                        {product.name}
-                      </p>
-                      <div className="mt-1 flex items-baseline gap-2">
-                        <span className="text-sm font-semibold tabular-nums">{formatPrice(product.priceCents)}</span>
+              <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
+                {featured.map((product, idx) => {
+                  const imageUrl = (product.images as { url: string }[] | null)?.[0]?.url ?? null;
+                  return (
+                    <Link key={product.id} href={`/products/${product.slug}`} className="group flex flex-col gap-3">
+                      <div className="bg-muted relative aspect-square overflow-hidden rounded-2xl">
+                        {imageUrl ? (
+                          <Image
+                            src={imageUrl}
+                            alt={product.name}
+                            fill
+                            sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
+                            className="object-cover transition-transform duration-300 group-hover:scale-105"
+                            priority={idx === 0}
+                          />
+                        ) : (
+                          <div className="bg-muted h-full w-full" />
+                        )}
                         {product.comparePriceCents && product.comparePriceCents > product.priceCents && (
-                          <span className="text-muted-foreground text-xs tabular-nums line-through">
-                            {formatPrice(product.comparePriceCents)}
+                          <span className="bg-destructive text-destructive-foreground absolute top-2 left-2 rounded-full px-2 py-0.5 text-[10px] font-semibold">
+                            Sale
                           </span>
                         )}
                       </div>
-                    </div>
-                  </Link>
-                );
-              })}
+                      <div>
+                        <p className="text-foreground line-clamp-2 text-sm font-medium group-hover:underline">
+                          {product.name}
+                        </p>
+                        <div className="mt-1 flex items-baseline gap-2">
+                          <span className="text-sm font-semibold tabular-nums">{formatPrice(product.priceCents)}</span>
+                          {product.comparePriceCents && product.comparePriceCents > product.priceCents && (
+                            <span className="text-muted-foreground text-xs tabular-nums line-through">
+                              {formatPrice(product.comparePriceCents)}
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                    </Link>
+                  );
+                })}
+              </div>
             </div>
           </section>
         )}
 
         {/* ── Categories ── */}
         {categories.length > 0 && (
-          <section className="bg-muted/40 border-border border-t">
-            <div className="container mx-auto px-4 py-16">
+          <section className="border-border border-t bg-muted/40 w-full">
+            <div className="mx-auto w-full max-w-7xl px-4 py-16">
               <h2 className="mb-8 text-2xl font-bold tracking-tight">Shop by category</h2>
               <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
                 {categories.map(cat => (
@@ -154,17 +156,19 @@ export default async function HomePage() {
         )}
 
         {/* ── CTA banner ── */}
-        <section className="container mx-auto px-4 py-16">
-          <div className="bg-primary text-primary-foreground flex flex-col items-center gap-4 rounded-3xl px-8 py-14 text-center">
-            <h2 className="text-2xl font-bold sm:text-3xl">Ready to find something great?</h2>
-            <p className="text-primary-foreground/80 max-w-sm text-sm">
-              Thousands of products, fast shipping, and easy returns. Start exploring today.
-            </p>
-            <Button asChild variant="secondary" size="lg" className="mt-2 h-11 px-8">
-              <Link href="/products">
-                Browse all products <ArrowRight className="ml-2 h-4 w-4" />
-              </Link>
-            </Button>
+        <section className="w-full">
+          <div className="mx-auto w-full max-w-7xl px-4 py-16">
+            <div className="bg-primary text-primary-foreground flex flex-col items-center gap-4 rounded-3xl px-8 py-14 text-center">
+              <h2 className="text-2xl font-bold sm:text-3xl">Ready to find something great?</h2>
+              <p className="text-primary-foreground/80 max-w-sm text-sm">
+                Thousands of products, fast shipping, and easy returns. Start exploring today.
+              </p>
+              <Button asChild variant="secondary" size="lg" className="mt-2 h-11 px-8">
+                <Link href="/products">
+                  Browse all products <ArrowRight className="ml-2 h-4 w-4" />
+                </Link>
+              </Button>
+            </div>
           </div>
         </section>
       </main>
