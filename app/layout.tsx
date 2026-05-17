@@ -1,9 +1,10 @@
-import type { Metadata } from 'next';
-import { Geist, Geist_Mono } from 'next/font/google';
-import { ClerkProvider } from '@clerk/nextjs';
-import { Analytics } from '@vercel/analytics/next';
-import { VitalsReporter } from '@/components/vitals-reporter';
-import './globals.css';
+import type { Metadata } from 'next'
+import Script from 'next/script'
+import { Geist, Geist_Mono } from 'next/font/google'
+import { ClerkProvider } from '@clerk/nextjs'
+import { Analytics } from '@vercel/analytics/next'
+import { VitalsReporter } from '@/components/vitals-reporter'
+import './globals.css'
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -26,7 +27,7 @@ export const metadata: Metadata = {
 export default function RootLayout({
   children,
 }: Readonly<{
-  children: React.ReactNode;
+  children: React.ReactNode
 }>) {
   return (
     <html lang="en">
@@ -34,7 +35,27 @@ export default function RootLayout({
         <ClerkProvider>{children}</ClerkProvider>
         <Analytics />
         <VitalsReporter />
+
+        {/*
+          strategy="afterInteractive" — defers until after hydration.
+          The right default for analytics, chat widgets, tag managers.
+          Equivalent to: script loads after DOMContentLoaded, non-blocking.
+        */}
+        <Script
+          src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXX"
+          strategy="afterInteractive"
+        />
+
+        {/*
+          strategy="lazyOnload" — lowest priority, loads during browser idle.
+          Use for: non-critical widgets, A/B testing scripts, social embeds.
+          Never use "beforeInteractive" unless the script must run before React.
+        */}
+        <Script
+          src="https://cdn.example.com/chat-widget.js"
+          strategy="lazyOnload"
+        />
       </body>
     </html>
-  );
+  )
 }
