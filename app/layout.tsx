@@ -35,7 +35,7 @@ export default function RootLayout({
       <head>
         <style>{`
           * { margin: 0; padding: 0; box-sizing: border-box; }
-          html { width: 100%; -webkit-font-smoothing: antialiased; }
+          html { width: 100%; overflow-y: scroll; -webkit-font-smoothing: antialiased; }
           body { width: 100%; font-family: var(--font-geist-sans), system-ui, -apple-system, sans-serif; background: #ffffff; color: #1a1a1a; }
           main { display: block; }
           img { max-width: 100%; height: auto; display: block; }
