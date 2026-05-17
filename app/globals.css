@@ -127,3 +127,52 @@
     @apply font-sans;
   }
 }
+
+@keyframes slide-good {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(300px);
+  }
+}
+
+.card {
+  /* will-change: tell the browser to promote this element to its own
+     compositor layer BEFORE the animation starts, so there's no
+     promotion cost mid-animation. Only add this to elements you
+     actually animate — each layer costs GPU memory. */
+  will-change: transform;
+  transition:
+    transform 200ms ease-out,
+    opacity 200ms ease-out;
+
+  animation: slide-good 300ms ease-in-out;
+}
+
+.card:hover {
+  will-change: transform, opacity; /* promoted only while hovered */
+  transform: translateY(-4px);
+}
+/* When :hover ends, will-change no longer applies → layer demoted */
+/*
+  Every frame:
+  1. Compositor thread: update transform matrix
+  2. Compositor thread: blend layers
+  Main thread: untouched. Long JS task? Doesn't matter — animation continues.
+*/
+
+@keyframes fade-good {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+.modal {
+  will-change: opacity;
+  animation: fade-good 200ms ease-out;
+}
+/* Every frame: GPU multiplies the layer's alpha channel by the current
+   opacity value. Pixels are unchanged. Zero repaint. */
