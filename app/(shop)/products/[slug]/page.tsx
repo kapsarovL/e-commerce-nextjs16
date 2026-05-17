@@ -9,7 +9,7 @@ import Image from 'next/image';
 import type { Metadata } from 'next';
 import { Button } from '@/components/ui/button';
 
-const AddToCartButton = dynamic(() => import('@/components/cart/add-to-cart-button').then(mod => ({ default: mod.AddToCartButton })), { ssr: false });
+const AddToCartButton = dynamic(() => import('@/components/cart/add-to-cart-button').then(mod => ({ default: mod.AddToCartButton })));
 
 export const revalidate = 3600; // Revalidate every hour
 
