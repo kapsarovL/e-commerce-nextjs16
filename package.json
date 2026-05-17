@@ -5,11 +5,11 @@
   "private": true,
   "packageManager": "pnpm@10.30.3",
   "scripts": {
-    "dev": "turbo dev",
-    "build": "turbo build",
+    "dev": "next dev",
+    "build": "next build",
     "start": "next start",
-    "typecheck": "turbo typecheck",
-    "lint": "turbo lint",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint .",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "db:generate": "drizzle-kit generate",
@@ -22,7 +22,9 @@
     "test:e2e": "playwright test",
     "test:e2e:ui": "playwright test --ui",
     "test:e2e:debug": "playwright test --debug",
-    "prepare": "node --eval \"if (!process.env.CI) require('node:child_process').execSync('husky', {stdio:'inherit'});\""
+    "prepare": "node --eval \"if (!process.env.CI) require('node:child_process').execSync('husky', {stdio:'inherit'});\"",
+    "size": "size-limit",
+    "size:ci": "size-limit --ci"
   },
   "dependencies": {
     "@clerk/nextjs": "^7.2.4",
@@ -95,7 +97,9 @@
     "typescript": "^5",
     "typescript-eslint": "^8.57.2",
     "vite": "^8.0.8",
-    "vitest": "^4.1.2"
+    "vitest": "^4.1.2",
+    "size-limit": "^11.0.0",
+    "@size-limit/preset-app": "^11.0.0"
   },
   "pnpm": {
     "overrides": {
@@ -107,5 +111,37 @@
       "postcss": ">=8.5.10",
       "ip-address": ">=10.1.1"
     }
-  }
+  },
+  "size-limit": [
+    {
+      "name": "Main bundle",
+      "path": ".next/static/chunks/main-*.js",
+      "limit": "80 kB",
+      "gzip": true
+    },
+    {
+      "name": "Framework chunk",
+      "path": ".next/static/chunks/framework-*.js",
+      "limit": "50 kB",
+      "gzip": true
+    },
+    {
+      "name": "App shell",
+      "path": ".next/static/chunks/pages/_app-*.js",
+      "limit": "20 kB",
+      "gzip": true
+    },
+    {
+      "name": "Home page",
+      "path": ".next/static/chunks/pages/index-*.js",
+      "limit": "30 kB",
+      "gzip": true
+    },
+    {
+      "name": "Checkout page",
+      "path": ".next/static/chunks/pages/checkout-*.js",
+      "limit": "40 kB",
+      "gzip": true
+    }
+  ]
 }
