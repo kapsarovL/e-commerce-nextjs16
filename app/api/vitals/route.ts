@@ -2,8 +2,6 @@ import { z } from 'zod';
 import { type NextRequest, NextResponse } from 'next/server';
 import { insertVital } from '@/lib/vitals-db';
 
-// ─── Validation schema ────────────────────────────────────────────────────────
-
 const VitalSchema = z.object({
   name: z.enum(['CLS', 'INP', 'LCP']),
   value: z.number().finite().nonnegative(),
@@ -16,7 +14,6 @@ const VitalSchema = z.object({
   connection: z.string(),
 });
 
-// ─── Route handler ────────────────────────────────────────────────────────────
 export async function POST(req: NextRequest): Promise<NextResponse> {
   // sendBeacon sends as text/plain — handle both content types
   let body: unknown;
@@ -34,11 +31,14 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
 
   try {
     await insertVital(parsed.data);
-    return NextResponse.json({ ok: true }, { status: 201 });
+    const response = NextResponse.json({ ok: true }, { status: 201 });
+    response.headers.set('Cache-Control', 'public, max-age=0, must-revalidate');
+    return response;
   } catch (err) {
     console.error('[vitals] insert failed:', err);
-    // Return 204 — client doesn't need to retry vitals
-    return new NextResponse(null, { status: 204 });
+    const response = new NextResponse(null, { status: 204 });
+    response.headers.set('Cache-Control', 'public, max-age=0, must-revalidate');
+    return response;
   }
 }
 

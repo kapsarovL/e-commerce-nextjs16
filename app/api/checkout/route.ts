@@ -23,7 +23,7 @@ export async function POST(req: Request) {
   const ip = getClientIp(req);
   const { success: allowed, limit, remaining, reset } = await checkoutRateLimit.limit(ip);
   if (!allowed) {
-    return new NextResponse('Too many requests', {
+    const response = new NextResponse('Too many requests', {
       status: 429,
       headers: {
         'X-RateLimit-Limit': String(limit),
@@ -31,6 +31,8 @@ export async function POST(req: Request) {
         'Retry-After': String(Math.ceil((reset - Date.now()) / 1000)),
       },
     });
+    response.headers.set('Cache-Control', 'private, no-cache');
+    return response;
   }
 
   // ── Parse body ────────────────────────────────────────────────────────────
@@ -38,12 +40,16 @@ export async function POST(req: Request) {
   try {
     body = await req.json();
   } catch {
-    return NextResponse.json({ error: 'Invalid JSON body' }, { status: 400 });
+    const response = NextResponse.json({ error: 'Invalid JSON body' }, { status: 400 });
+    response.headers.set('Cache-Control', 'private, no-cache');
+    return response;
   }
 
   const parsed = checkoutRequestSchema.safeParse(body);
   if (!parsed.success) {
-    return NextResponse.json({ error: 'Invalid request', issues: parsed.error.flatten().fieldErrors }, { status: 422 });
+    const response = NextResponse.json({ error: 'Invalid request', issues: parsed.error.flatten().fieldErrors }, { status: 422 });
+    response.headers.set('Cache-Control', 'private, no-cache');
+    return response;
   }
 
   const { items: cartItems, guestEmail } = parsed.data;
@@ -69,7 +75,9 @@ export async function POST(req: Request) {
   }
 
   if (!customerEmail) {
-    return NextResponse.json({ error: 'Email required for checkout.' }, { status: 400 });
+    const response = NextResponse.json({ error: 'Email required for checkout.' }, { status: 400 });
+    response.headers.set('Cache-Control', 'private, no-cache');
+    return response;
   }
 
   // ── Live product validation ───────────────────────────────────────────────
@@ -101,7 +109,9 @@ export async function POST(req: Request) {
     }
   }
   if (errors.length > 0) {
-    return NextResponse.json({ error: 'Cart validation failed', details: errors }, { status: 409 });
+    const response = NextResponse.json({ error: 'Cart validation failed', details: errors }, { status: 409 });
+    response.headers.set('Cache-Control', 'private, no-cache');
+    return response;
   }
 
   // ── Stripe Customer ID — create once, reuse forever ───────────────────────
@@ -167,7 +177,9 @@ export async function POST(req: Request) {
     });
   } catch (err) {
     console.error('Stripe session creation failed:', err);
-    return NextResponse.json({ error: 'Payment provider error' }, { status: 502 });
+    const response = NextResponse.json({ error: 'Payment provider error' }, { status: 502 });
+    response.headers.set('Cache-Control', 'private, no-cache');
+    return response;
   }
 
   // ── Persist pending order ─────────────────────────────────────────────────
@@ -213,5 +225,7 @@ export async function POST(req: Request) {
     console.error('Failed to persist pending order:', err);
   }
 
-  return NextResponse.json({ url: session.url });
+  const response = NextResponse.json({ url: session.url });
+  response.headers.set('Cache-Control', 'private, no-cache');
+  return response;
 }
