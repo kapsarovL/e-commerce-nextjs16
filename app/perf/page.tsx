@@ -6,12 +6,15 @@ function formatValue(name: string, value: number): string {
   return `${Math.round(value)}ms`;
 }
 
-function getRatingColor(rating: string): string {
-  return rating === 'good'
-    ? 'color: var(--color-text-success)'
-    : rating === 'poor'
-      ? 'color: var(--color-text-danger)'
-      : 'color: var(--color-text-warning)';
+function getRatingColor(rating: string): React.CSSProperties {
+  return {
+    color:
+      rating === 'good'
+        ? 'var(--color-text-success)'
+        : rating === 'poor'
+          ? 'var(--color-text-danger)'
+          : 'var(--color-text-warning)',
+  };
 }
 
 export default async function PerfPage() {
@@ -42,10 +45,10 @@ export default async function PerfPage() {
                   style={{
                     textAlign: 'right',
                     padding: '10px 0',
-                    ...{ style: getRatingColor(v.rating) },
+                    ...getRatingColor(v.rating),
                   }}
                 >
-                  <span style={getRatingColor(v.rating) as unknown as React.CSSProperties}>{v.rating}</span>
+                  {v.rating}
                 </td>
                 <td style={{ textAlign: 'right', padding: '10px 0', color: 'var(--color-text-tertiary)' }}>
                   {v.sampleCount}
