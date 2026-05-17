@@ -181,7 +181,7 @@ export function CheckoutForm() {
             <ul className="flex flex-col gap-3" aria-label="Items in cart">
               {validItems.map(item => (
                 <li key={item.id} className="flex items-center gap-3">
-                  <div className="bg-muted relative h-12 w-12 shrink-0 overflow-hidden rounded-md">
+                  <div className="bg-muted h-12 w-12 shrink-0 overflow-hidden rounded-md" style={{ position: 'relative' }}>
                     {item.imageUrl && (
                       <Image src={item.imageUrl} alt={item.name} fill sizes="48px" className="object-cover" />
                     )}
