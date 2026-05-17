@@ -116,11 +116,10 @@ jobs:
         uses: actions/github-script@v7
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          script: |
+          script: >
             const fs = require('fs');
             const path = require('path');
 
-            // Find all lhr-*.json files in .lighthouseci/
             const dir = '.lighthouseci';
             if (!fs.existsSync(dir)) return;
 
@@ -130,7 +129,6 @@ jobs:
 
             if (!reports.length) return;
 
-            // Aggregate median values across all runs for each URL
             const byUrl = {};
             for (const r of reports) {
               const url = r.requestedUrl;
@@ -157,15 +155,9 @@ jobs:
               rows += `| \`${route}\` | ${score} | ${icon(lcp,2500,4000)} ${fmt(lcp,'ms')} | ${icon(cls,0.1,0.25)} ${fmt(cls,'score')} | ${icon(inp,200,500)} ${fmt(inp,'ms')} |\n`;
             }
 
-            const body = `## Lighthouse CI results
+            const tableHeader = '| Route | Score | LCP | CLS | INP |\n|-------|-------|-----|-----|-----|\n';
+            const body = `## Lighthouse CI results\n\n${tableHeader}${rows}**Thresholds:** LCP < 2500ms · CLS < 0.1 · INP < 200ms\n[Download full report](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})`;
 
-| Route | Score | LCP | CLS | INP |
-|-------|-------|-----|-----|-----|
-${rows}
-**Thresholds:** LCP < 2500ms · CLS < 0.1 · INP < 200ms
-[Download full report](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})`;
-
-            // Update existing comment if it exists, otherwise create new
             const { data: comments } = await github.rest.issues.listComments({
               owner: context.repo.owner,
               repo: context.repo.repo,
