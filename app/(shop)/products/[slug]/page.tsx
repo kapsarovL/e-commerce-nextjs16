@@ -7,6 +7,8 @@ import Image from 'next/image';
 import type { Metadata } from 'next';
 import { AddToCartButton } from '@/components/cart/add-to-cart-button';
 
+export const revalidate = 3600; // Revalidate every hour
+
 interface ProductPageProps {
   params: Promise<{ slug: string }>;
 }

@@ -6,6 +6,8 @@ import { ProductSort } from '@/components/product/product-sort';
 import { getProducts, getCategories } from '@/lib/db/queries';
 import { productSearchSchema } from '@/lib/validations/search-params';
 
+export const revalidate = 3600; // Revalidate every hour
+
 export const metadata: Metadata = {
   title: 'Products',
   description: 'Browse our full catalog.',

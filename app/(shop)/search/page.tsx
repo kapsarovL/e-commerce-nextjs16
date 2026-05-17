@@ -9,6 +9,8 @@ import { ProductFilters } from '@/components/product/product-filters';
 import { ProductSort } from '@/components/product/product-sort';
 import { SearchBar } from '@/components/layout/search-bar';
 
+export const revalidate = 3600; // Revalidate every hour
+
 export const metadata: Metadata = { title: 'Browse catalog' };
 
 interface SearchPageProps {
