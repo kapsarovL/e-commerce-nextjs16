@@ -10,7 +10,7 @@ export const revalidate = 3600; // Revalidate every hour
 
 export const metadata: Metadata = {
   title: 'Products',
-  description: 'Browse our full catalog.',
+  description: 'Shop our complete collection of quality products. Browse by category, filter by price, and find exactly what you\'re looking for.',
 };
 
 interface ProductsPageProps {

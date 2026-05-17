@@ -21,10 +21,20 @@ export async function generateMetadata({ params }: ProductPageProps): Promise<Me
   const { slug } = await params;
   const product = await db.query.products.findFirst({
     where: eq(products.slug, slug),
-    columns: { name: true, description: true },
+    columns: { name: true, description: true, priceCents: true },
   });
   if (!product) return {};
-  return { title: product.name, description: product.description ?? undefined };
+
+  const description = product.description
+    ? product.description.length > 160
+      ? product.description.slice(0, 157) + '...'
+      : product.description
+    : `Buy ${product.name}`;
+
+  return {
+    title: product.name,
+    description,
+  };
 }
 
 export default async function ProductPage({ params }: ProductPageProps) {
