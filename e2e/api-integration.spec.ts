@@ -47,7 +47,6 @@ test.describe('API Integration', () => {
 
   test('product search API returns results', async ({ page }) => {
     // Monitor API calls
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const responses: any[] = [];
     page.on('response', async response => {
       if (response.url().includes('/api/products') || response.url().includes('/api/search')) {
@@ -70,7 +69,7 @@ test.describe('API Integration', () => {
 
       // Verify product results loaded
       const products = page.locator('[data-testid="product-card"]');
-      const hasResults = (await products.count()) >= 0;
+      const hasResults = await products.count() >= 0;
       expect(hasResults).toBeTruthy();
     }
   });
@@ -88,7 +87,7 @@ test.describe('API Integration', () => {
 
       // Verify cart badge shows item
       const cartBadge = page.locator('[data-testid="cart-badge"]');
-      await cartBadge.isVisible().catch(() => false);
+      const hasItem = await cartBadge.isVisible().catch(() => false);
 
       // Reload page
       await page.reload();
@@ -129,7 +128,7 @@ test.describe('API Integration', () => {
 });
 
 test.describe('Real-time Stock Updates', () => {
-  test('product stock updates when other user purchases', async ({ page }) => {
+  test('product stock updates when other user purchases', async ({ page, context }) => {
     // Open product detail page
     await page.goto('/products');
     const productLink = page.locator('[data-testid="product-card"] a').first();
@@ -139,7 +138,7 @@ test.describe('Real-time Stock Updates', () => {
 
       // Get initial stock
       const stockText = page.locator('[data-testid="stock-badge"]');
-      await stockText.textContent().catch(() => null);
+      const initialStock = await stockText.textContent().catch(() => null);
 
       // Simulate time passing (in real scenario, other user purchases)
       await page.waitForTimeout(1000);

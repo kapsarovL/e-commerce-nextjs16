@@ -1,5 +1,4 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { createMockProduct, createMockOrder, createMockCategory } from '@/lib/__tests__/test-utils';
 
 // Mock database module
 vi.mock('@/lib/db', () => ({
@@ -37,8 +36,20 @@ describe('Database Queries', () => {
     it('fetches multiple products with filters', async () => {
       const { db } = await import('@/lib/db');
       const mockProducts = [
-        createMockProduct({ id: 'prod-1', name: 'Product 1' }),
-        createMockProduct({ id: 'prod-2', name: 'Product 2' }),
+        {
+          id: 'prod-1',
+          name: 'Product 1',
+          priceCents: 1999,
+          stockQuantity: 10,
+          isPublished: true,
+        },
+        {
+          id: 'prod-2',
+          name: 'Product 2',
+          priceCents: 2999,
+          stockQuantity: 5,
+          isPublished: true,
+        },
       ];
 
       vi.mocked(db.query.products.findMany).mockResolvedValueOnce(mockProducts);
@@ -50,7 +61,13 @@ describe('Database Queries', () => {
 
     it('fetches single product by id', async () => {
       const { db } = await import('@/lib/db');
-      const mockProduct = createMockProduct({ id: 'prod-1', name: 'Product 1' });
+      const mockProduct = {
+        id: 'prod-1',
+        name: 'Product 1',
+        priceCents: 1999,
+        stockQuantity: 10,
+        isPublished: true,
+      };
 
       vi.mocked(db.query.products.findFirst).mockResolvedValueOnce(mockProduct);
 
@@ -61,8 +78,7 @@ describe('Database Queries', () => {
 
     it('returns null when product not found', async () => {
       const { db } = await import('@/lib/db');
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      vi.mocked(db.query.products.findFirst).mockResolvedValueOnce(null as any);
+      vi.mocked(db.query.products.findFirst).mockResolvedValueOnce(null);
 
       const product = await db.query.products.findFirst();
       expect(product).toBeNull();
@@ -70,11 +86,13 @@ describe('Database Queries', () => {
 
     it('handles out of stock products', async () => {
       const { db } = await import('@/lib/db');
-      const outOfStockProduct = createMockProduct({
+      const outOfStockProduct = {
         id: 'prod-1',
         name: 'Out of Stock',
+        priceCents: 1999,
         stockQuantity: 0,
-      });
+        isPublished: true,
+      };
 
       vi.mocked(db.query.products.findFirst).mockResolvedValueOnce(outOfStockProduct);
 
@@ -87,8 +105,20 @@ describe('Database Queries', () => {
     it('fetches user orders', async () => {
       const { db } = await import('@/lib/db');
       const mockOrders = [
-        createMockOrder({ id: 'order-1', userId: 'user-1', orderStatus: 'completed' as const }),
-        createMockOrder({ id: 'order-2', userId: 'user-1', orderStatus: 'processing' as const }),
+        {
+          id: 'order-1',
+          userId: 'user-1',
+          orderStatus: 'completed',
+          totalCents: 1999,
+          createdAt: new Date(),
+        },
+        {
+          id: 'order-2',
+          userId: 'user-1',
+          orderStatus: 'processing',
+          totalCents: 2999,
+          createdAt: new Date(),
+        },
       ];
 
       vi.mocked(db.query.orders.findMany).mockResolvedValueOnce(mockOrders);
@@ -100,23 +130,31 @@ describe('Database Queries', () => {
 
     it('fetches order with items', async () => {
       const { db } = await import('@/lib/db');
-      const mockOrder = createMockOrder({
+      const mockOrder = {
         id: 'order-1',
         userId: 'user-1',
-        orderStatus: 'completed' as const,
-      });
+        orderStatus: 'completed',
+        totalCents: 1999,
+        items: [
+          {
+            productId: 'prod-1',
+            productName: 'Product 1',
+            quantity: 1,
+            unitPriceCents: 1999,
+          },
+        ],
+      };
 
       vi.mocked(db.query.orders.findFirst).mockResolvedValueOnce(mockOrder);
 
       const order = await db.query.orders.findFirst();
-      expect(order?.id).toBe('order-1');
-      expect(order?.userId).toBe('user-1');
+      expect(order?.items).toHaveLength(1);
+      expect(order?.items[0].productName).toBe('Product 1');
     });
 
     it('returns null when order not found', async () => {
       const { db } = await import('@/lib/db');
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      vi.mocked(db.query.orders.findFirst).mockResolvedValueOnce(null as any);
+      vi.mocked(db.query.orders.findFirst).mockResolvedValueOnce(null);
 
       const order = await db.query.orders.findFirst();
       expect(order).toBeNull();
@@ -124,12 +162,13 @@ describe('Database Queries', () => {
 
     it('handles guest orders', async () => {
       const { db } = await import('@/lib/db');
-      const guestOrder = createMockOrder({
+      const guestOrder = {
         id: 'order-1',
         userId: null,
         guestEmail: 'guest@example.com',
-        orderStatus: 'completed' as const,
-      });
+        orderStatus: 'completed',
+        totalCents: 1999,
+      };
 
       vi.mocked(db.query.orders.findFirst).mockResolvedValueOnce(guestOrder);
 
@@ -143,8 +182,8 @@ describe('Database Queries', () => {
     it('fetches all categories', async () => {
       const { db } = await import('@/lib/db');
       const mockCategories = [
-        createMockCategory({ id: 'cat-1', name: 'Electronics' }),
-        createMockCategory({ id: 'cat-2', name: 'Clothing' }),
+        { id: 'cat-1', name: 'Electronics' },
+        { id: 'cat-2', name: 'Clothing' },
       ];
 
       vi.mocked(db.query.categories.findMany).mockResolvedValueOnce(mockCategories);
@@ -156,17 +195,13 @@ describe('Database Queries', () => {
 
   describe('Cache Invalidation', () => {
     it('invalidates product cache', async () => {
-      const mod = await import('@/lib/db/invalidate');
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const invalidateProduct = vi.mocked((mod as any).invalidateProduct);
+      const { invalidateProduct } = await import('@/lib/db/invalidate');
       await invalidateProduct('prod-1');
       expect(invalidateProduct).toHaveBeenCalledWith('prod-1');
     });
 
     it('invalidates inventory cache for slugs', async () => {
-      const mod = await import('@/lib/db/invalidate');
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const invalidateInventory = vi.mocked((mod as any).invalidateInventory);
+      const { invalidateInventory } = await import('@/lib/db/invalidate');
       await invalidateInventory(['product-1', 'product-2']);
       expect(invalidateInventory).toHaveBeenCalledWith(['product-1', 'product-2']);
     });

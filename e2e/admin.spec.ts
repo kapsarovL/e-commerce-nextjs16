@@ -48,13 +48,11 @@ test.describe('Admin Dashboard', () => {
 
       // Check for categories list
       const categoriesList = page.locator('[data-testid="categories-list"]');
-      await expect(categoriesList)
-        .toBeVisible()
-        .catch(() => {
-          // Categories may be in a table format
-          const table = page.locator('table');
-          expect(table).toBeVisible();
-        });
+      await expect(categoriesList).toBeVisible().catch(() => {
+        // Categories may be in a table format
+        const table = page.locator('table');
+        expect(table).toBeVisible();
+      });
     }
   });
 

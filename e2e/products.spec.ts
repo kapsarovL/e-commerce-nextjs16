@@ -35,7 +35,7 @@ test.describe('Product Catalog', () => {
 
     // Verify results appear
     const results = page.locator('[data-testid="product-card"]');
-    const resultsExist = (await results.count()) > 0;
+    const resultsExist = await results.count() > 0;
     expect(resultsExist).toBeTruthy();
   });
 
@@ -127,7 +127,7 @@ test.describe('Product Catalog', () => {
 
     // Find next page button
     const nextButton = page.locator('button:has-text("Next")');
-    if ((await nextButton.isVisible()) && !(await nextButton.isDisabled())) {
+    if (await nextButton.isVisible() && !await nextButton.isDisabled()) {
       await nextButton.click();
 
       // Verify URL changed

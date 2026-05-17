@@ -63,16 +63,12 @@ pnpm test:ci
 ## What's Not Covered (and Why)
 
 ### API Routes
-
 Next.js API routes require complex request context setup (headers, dynamic APIs) that's better tested via:
-
 - **E2E tests**: Playwright or Cypress for full request/response cycle
 - **Manual testing**: Test the checkout and webhook flows in staging
 
 ### React Components
-
 Component rendering and user interactions are better tested via:
-
 - **E2E tests**: Full integration with forms, payment, etc.
 - **Visual regression**: Ensure UI updates don't break layout
 - **Accessibility**: Verify keyboard navigation and screen reader support
@@ -112,4 +108,4 @@ components/__tests__/
 - **Focus**: One concern per test
 - **Clarity**: Test names describe the scenario and expected outcome
 - **Realism**: Use actual product/order structures, realistic values
-- **Maintainability**: Use factories (createMock\*) to avoid duplication
+- **Maintainability**: Use factories (createMock*) to avoid duplication

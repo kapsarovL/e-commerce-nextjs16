@@ -13,7 +13,6 @@ E2E tests validate full user workflows across the entire stack — browser rende
 Complete purchase journey from browsing to order completion.
 
 **Tests covered:**
-
 - Guest checkout flow (add to cart → fill form → place order)
 - Add multiple items and update quantities
 - Empty cart displays correct empty state
@@ -24,7 +23,6 @@ Complete purchase journey from browsing to order completion.
 **Coverage**: 6 tests
 
 **Key validations:**
-
 - Product can be added from catalog
 - Cart updates in real-time
 - Form validation prevents incomplete submissions
@@ -35,7 +33,6 @@ Complete purchase journey from browsing to order completion.
 Product browsing, filtering, searching, and pagination.
 
 **Tests covered:**
-
 - Browse products with category filters
 - Search products by name
 - Filter by price range
@@ -48,7 +45,6 @@ Product browsing, filtering, searching, and pagination.
 **Coverage**: 8 tests
 
 **Key validations:**
-
 - Filters apply correctly and update results
 - Search returns relevant products
 - Product detail page loads with correct data
@@ -59,7 +55,6 @@ Product browsing, filtering, searching, and pagination.
 Sign-in flow, protected routes, and order history.
 
 **Tests covered:**
-
 - Sign-in page loads (Clerk integration)
 - Protected routes redirect unauthenticated users to sign-in
 - Order history page displays user's orders
@@ -71,7 +66,6 @@ Sign-in flow, protected routes, and order history.
 **Coverage**: 7 tests
 
 **Key validations:**
-
 - Clerk authentication integrates correctly
 - Protected routes enforce auth requirements
 - Order snapshots display accurate historical data
@@ -82,7 +76,6 @@ Sign-in flow, protected routes, and order history.
 API route functionality and real-time updates.
 
 **Tests covered:**
-
 - Checkout API creates valid Stripe session
 - Product search API returns results
 - Cart persists through page reload (sessionStorage)
@@ -92,7 +85,6 @@ API route functionality and real-time updates.
 **Coverage**: 5 tests
 
 **Key validations:**
-
 - API endpoints respond correctly
 - Client-side caching/persistence works
 - Error handling doesn't break the UI
@@ -103,7 +95,6 @@ API route functionality and real-time updates.
 Admin-only pages and functionality.
 
 **Tests covered:**
-
 - Dashboard displays overview metrics (revenue, orders, products)
 - Navigation to categories page works
 - Recent orders section displays data
@@ -113,7 +104,6 @@ Admin-only pages and functionality.
 **Coverage**: 5 tests
 
 **Key validations:**
-
 - Admin routes are protected (redirect to sign-in)
 - Dashboard metrics are accurate
 - Admin filters and sorting work correctly
@@ -228,7 +218,6 @@ await page.screenshot({ path: 'debug.png' });
 ### Tests flake (pass/fail randomly)
 
 **Solution**: Wait for network state explicitly:
-
 ```typescript
 await page.waitForLoadState('networkidle');
 ```
@@ -236,30 +225,22 @@ await page.waitForLoadState('networkidle');
 ## What's Not Covered (And Why)
 
 ### Visual Regression
-
 UI screenshots and visual diffs are browser-dependent. Better tested with:
-
 - **Percy.io** — visual regression as a service
 - **Chromatic** — Storybook visual testing
 
 ### Accessibility (a11y)
-
 Keyboard navigation and screen reader compatibility require:
-
 - **axe-core** — automated a11y scanning
 - **Manual testing** with screen readers
 
 ### Performance
-
 Load times and Core Web Vitals need:
-
 - **Lighthouse CI** — performance budgets
 - **Web Vitals API** — real user monitoring
 
 ### Mobile-specific interactions
-
 Mobile gesture testing requires:
-
 - **Playwright mobile devices** — built-in emulation
 - **Real device testing** via BrowserStack
 
