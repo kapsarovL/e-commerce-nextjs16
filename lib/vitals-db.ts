@@ -51,7 +51,7 @@ interface VitalSummary {
 
 // P75 per metric for the last 7 days — the number Google measures
 export async function getP75Vitals(pathname?: string): Promise<VitalSummary[]> {
-  const rows = await sql<VitalSummary[]>`
+  const rows = await sql`
     SELECT
       name,
       ROUND(PERCENTILE_CONT(0.75) WITHIN GROUP (ORDER BY value)::numeric, 2) AS p75,
@@ -62,7 +62,7 @@ export async function getP75Vitals(pathname?: string): Promise<VitalSummary[]> {
       ${pathname ? sql`AND pathname = ${pathname}` : sql``}
     GROUP BY name
     ORDER BY name
-  `;
+  ` as unknown as Promise<VitalSummary[]>;
   return rows;
 }
 
