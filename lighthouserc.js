@@ -10,6 +10,7 @@ export default {
       startServerCommand: 'pnpm start',
       startServerReadyPattern: 'Ready in',
       startServerReadyTimeout: 30000,
+      staticDistDir: '.next/standalone/public',
 
       // Which URLs to audit.
       // Audit your most critical routes — not every page.
