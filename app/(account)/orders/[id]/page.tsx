@@ -7,9 +7,19 @@ import { formatPrice } from '@/lib/utils';
 import { Separator } from '@/components/ui/separator';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
+import type { Metadata } from 'next';
 
 interface OrderDetailPageProps {
   params: Promise<{ id: string }>;
+}
+
+export async function generateMetadata({ params }: OrderDetailPageProps): Promise<Metadata> {
+  const { id } = await params;
+  return {
+    title: `Order ${id}`,
+    description: 'View your order details and tracking information.',
+    robots: { index: false },
+  };
 }
 
 export default async function OrderDetailPage({ params }: OrderDetailPageProps) {

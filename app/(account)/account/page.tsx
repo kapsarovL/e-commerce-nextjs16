@@ -9,7 +9,11 @@ import { formatPrice } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
-export const metadata: Metadata = { title: 'My Account' };
+export const metadata: Metadata = {
+  title: 'My Account',
+  description: 'Manage your account information and view recent orders.',
+  robots: { index: false },
+};
 
 export default async function AccountPage() {
   const { userId: clerkId } = await auth();

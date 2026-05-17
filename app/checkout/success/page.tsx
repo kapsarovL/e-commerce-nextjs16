@@ -14,7 +14,8 @@ export const dynamic = 'force-dynamic';
 
 export const metadata: Metadata = {
   title: 'Order confirmed',
-  robots: { index: false }, // don't index confirmation pages
+  description: 'Your order has been successfully placed. Check your email for details and tracking information.',
+  robots: { index: false },
 };
 
 interface SuccessPageProps {
