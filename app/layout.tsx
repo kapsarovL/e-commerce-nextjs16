@@ -4,6 +4,7 @@ import { ClerkProvider } from '@clerk/nextjs';
 import { Analytics } from '@vercel/analytics/next';
 import { VitalsReporter } from '@/components/vitals-reporter';
 import Script from 'next/script';
+import { headers } from 'next/headers';
 
 import './globals.css';
 
@@ -27,28 +28,28 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const nonce = (await headers()).get('x-nonce') ?? '';
+
   return (
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         <ClerkProvider>
           {children}
-          {/*
-          strategy="afterInteractive" — defers until after hydration.
-          The right default for analytics, chat widgets, tag managers.
-          Equivalent to: script loads after DOMContentLoaded, non-blocking.
-        */}
-          <Script src="https://www.googletagmanager.com/gtag/js?id=G-V6BKVYNHV9" strategy="afterInteractive" />
-          {/*
-          strategy="lazyOnload" — lowest priority, loads during browser idle.
-          Use for: non-critical widgets, A/B testing scripts, social embeds.
-          Never use "beforeInteractive" unless the script must run before React.
-        */}
-          <Script src="https://cdn.example.com/chat-widget.js" strategy="lazyOnload" />
+          <Script
+            src="https://www.googletagmanager.com/gtag/js?id=G-V6BKVYNHV9"
+            strategy="afterInteractive"
+            nonce={nonce}
+          />
+          <Script
+            src="https://cdn.example.com/chat-widget.js"
+            strategy="lazyOnload"
+            nonce={nonce}
+          />
         </ClerkProvider>
         <Analytics />
         <VitalsReporter />
