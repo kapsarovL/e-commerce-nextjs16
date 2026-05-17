@@ -37,8 +37,8 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     return NextResponse.json({ ok: true }, { status: 201 });
   } catch (err) {
     console.error('[vitals] insert failed:', err);
-    // Return 200 anyway — client doesn't need to retry vitals
-    return NextResponse.json({ ok: false }, { status: 200 });
+    // Return 204 — client doesn't need to retry vitals
+    return new NextResponse(null, { status: 204 });
   }
 }
 
