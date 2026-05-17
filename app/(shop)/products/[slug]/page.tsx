@@ -47,6 +47,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
               sizes="(min-width: 768px) 50vw, 100vw"
               className="object-cover"
               priority
+              fetchPriority="high"
             />
           ) : (
             <div className="bg-muted h-full w-full" />
