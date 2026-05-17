@@ -63,7 +63,7 @@ export async function getP75Vitals(pathname?: string): Promise<VitalSummary[]> {
       ${pathname ? sql`AND pathname = ${pathname}` : sql``}
     GROUP BY name
     ORDER BY name
-  `) as unknown as Promise<VitalSummary[]>;
+  `) as VitalSummary[];
   return rows;
 }
 
@@ -71,7 +71,7 @@ export async function getP75Vitals(pathname?: string): Promise<VitalSummary[]> {
 export async function getVitalsByRoute(
   metricName: 'CLS' | 'INP' | 'LCP',
 ): Promise<{ pathname: string; p75: number; sampleCount: number }[]> {
-  return sql`
+  const rows = await sql`
     SELECT
       pathname,
       ROUND(PERCENTILE_CONT(0.75) WITHIN GROUP (ORDER BY value)::numeric, 2) AS p75,
@@ -83,5 +83,6 @@ export async function getVitalsByRoute(
     HAVING COUNT(*) >= 10
     ORDER BY p75 DESC
     LIMIT 20
-  ` as unknown as Promise<{ pathname: string; p75: number; sampleCount: number }[]>;
+  `;
+  return rows as { pathname: string; p75: number; sampleCount: number }[];
 }
