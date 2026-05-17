@@ -1,9 +1,9 @@
 import { type NextRequest, NextResponse } from 'next/server';
 import sharp from 'sharp';
 
-export async function GET(req: NextRequest, { params }: { params: { id: string } }): Promise<NextResponse> {
+export async function GET(req: NextRequest, { params }: { params: Promise<{ id: string }> }): Promise<NextResponse> {
   const accept = req.headers.get('accept') ?? '';
-  const imageBuffer = await fetchImageBuffer(params.id);
+  const imageBuffer = await fetchImageBuffer((await params).id);
 
   let format: 'avif' | 'webp' | 'jpeg';
   let contentType: string;
