@@ -42,7 +42,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
     <div className="container mx-auto max-w-5xl px-4 py-10">
       <div className="grid grid-cols-1 gap-10 md:grid-cols-2">
         {/* Image */}
-        <div className="bg-muted relative aspect-square overflow-hidden rounded-xl">
+        <div className="bg-muted aspect-square overflow-hidden rounded-xl" style={{ position: 'relative' }}>
           {primaryImage ? (
             <Image
               src={primaryImage.url}

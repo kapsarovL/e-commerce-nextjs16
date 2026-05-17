@@ -94,7 +94,7 @@ export default async function HomePage() {
                   const imageUrl = (product.images as { url: string }[] | null)?.[0]?.url ?? null;
                   return (
                     <Link key={product.id} href={`/products/${product.slug}`} className="group flex flex-col gap-3">
-                      <div className="bg-muted relative aspect-square overflow-hidden rounded-2xl">
+                      <div className="bg-muted aspect-square overflow-hidden rounded-2xl" style={{ position: 'relative' }}>
                         {imageUrl ? (
                           <Image
                             src={imageUrl}
