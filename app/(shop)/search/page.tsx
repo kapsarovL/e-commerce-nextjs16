@@ -11,7 +11,10 @@ import { SearchBar } from '@/components/layout/search-bar';
 
 export const revalidate = 3600; // Revalidate every hour
 
-export const metadata: Metadata = { title: 'Browse catalog' };
+export const metadata: Metadata = {
+  title: 'Search products',
+  description: 'Search our catalog and discover quality products.',
+};
 
 interface SearchPageProps {
   searchParams: Promise<Record<string, string | string[] | undefined>>;
