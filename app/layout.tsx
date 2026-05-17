@@ -45,11 +45,6 @@ export default async function RootLayout({
             strategy="afterInteractive"
             nonce={nonce}
           />
-          <Script
-            src="https://cdn.example.com/chat-widget.js"
-            strategy="lazyOnload"
-            nonce={nonce}
-          />
         </ClerkProvider>
         <Analytics />
         <VitalsReporter />
