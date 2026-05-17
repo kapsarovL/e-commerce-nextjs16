@@ -28,8 +28,8 @@ export function Footer() {
   const year = new Date().getFullYear();
 
   return (
-    <footer className="border-border bg-background border-t">
-      <div className="container mx-auto px-4 py-12">
+    <footer className="border-border bg-background border-t w-full">
+      <div className="mx-auto w-full max-w-7xl px-4 py-12">
         <div className="grid grid-cols-2 gap-8 sm:grid-cols-4">
           {/* Brand */}
           <div className="col-span-2 sm:col-span-1">

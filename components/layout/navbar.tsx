@@ -21,7 +21,7 @@ export function Navbar() {
   return (
     <>
       <header className="border-border bg-background/95 supports-backdrop-filter:bg-background/60 sticky top-0 z-40 w-full border-b backdrop-blur">
-        <nav className="container mx-auto flex h-14 items-center gap-4 px-4" aria-label="Main navigation">
+        <nav className="mx-auto flex h-14 w-full max-w-7xl items-center gap-4 px-4" aria-label="Main navigation">
           {/* Logo */}
           <Link
             href="/"
