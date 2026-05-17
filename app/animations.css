@@ -60,7 +60,7 @@
 /* ✅ Scale with transform — also compositor-safe */
 @keyframes scale-up {
   from { transform: scale(0.95); }
-  to   { transform: scale(1); }
+  to { transform: scale(1); }
 }
 
 .scale-element {
@@ -71,4 +71,27 @@
 /*
   Scale via transform is compositor-only. Use this instead of
   width/height changes which force layout recalcs.
+*/
+
+/* ✅ CSS approach: promote only during hover, demote on mouse-leave */
+.card-hover {
+  transition: transform 200ms ease-out, opacity 200ms ease-out;
+}
+
+.card-hover:hover {
+  will-change: transform, opacity; /* promoted only while hovered */
+  transform: translateY(-4px);
+}
+
+/*
+  When :hover ends, will-change no longer applies → layer demoted.
+
+  Key insight: don't keep will-change on permanently (wastes GPU memory).
+  Apply it only during the interaction. The browser:
+  1. Promotes layer on hover (instant, user expects this)
+  2. Animates transform/opacity on compositor thread
+  3. Demotes layer when hover ends (cleanup)
+
+  Result: smooth hover effect with zero main-thread jank,
+  without permanently reserving GPU memory.
 */
