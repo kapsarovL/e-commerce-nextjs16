@@ -1,0 +1,194 @@
+name: Lighthouse CI
+
+on:
+  pull_request:
+    branches: [main, develop]
+    # Only run when files that affect rendering change.
+    # Skip on docs-only PRs — saves ~3 minutes of CI time.
+    paths:
+      - 'app/**'
+      - 'components/**'
+      - 'styles/**'
+      - 'public/**'
+      - 'next.config.*'
+      - 'package.json'
+      - 'pnpm-lock.yaml'
+
+# Cancel in-progress runs on the same PR branch.
+# Prevents queue buildup when you push multiple commits quickly.
+concurrency:
+  group: lighthouse-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  lighthouse:
+    name: Lighthouse audit
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    env:
+      # Controlled environment — eliminates network variance from P75 scores.
+      # LHCI always runs 3 audits per URL; we take the median.
+      LHCI_BUILD_TOKEN: ${{ secrets.LHCI_BUILD_TOKEN }}
+      DATABASE_URL: ${{ secrets.DATABASE_URL }}
+
+    steps:
+      # ── 1. Checkout ──────────────────────────────────────────────────────────
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Full history needed for LHCI comparison
+
+      # ── 2. Setup ─────────────────────────────────────────────────────────────
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - name: Get pnpm store path
+        id: pnpm-cache
+        run: echo "STORE_PATH=$(pnpm store path)" >> $GITHUB_OUTPUT
+
+      - name: Cache pnpm store
+        uses: actions/cache@v4
+        with:
+          path: ${{ steps.pnpm-cache.outputs.STORE_PATH }}
+          key: pnpm-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}
+          restore-keys: pnpm-${{ runner.os }}-
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      # ── 3. Build ─────────────────────────────────────────────────────────────
+      # Production build is required — dev server skips optimisations
+      # that directly affect LCP (image optimisation, bundle splitting, etc.)
+      - name: Build Next.js app
+        run: pnpm build
+        env:
+          # Provide any env vars your build needs — keep secrets out of NEXT_PUBLIC_
+          NODE_ENV: production
+
+      # ── 4. Install Chrome ────────────────────────────────────────────────────
+      # Pinned Chrome version = reproducible audits across runs.
+      # ubuntu-latest ships an outdated Chrome — always install explicitly.
+      - name: Install Chrome
+        uses: browser-actions/setup-chrome@v1
+        with:
+          chrome-version: stable
+
+      # ── 5. Install LHCI ──────────────────────────────────────────────────────
+      - name: Install Lighthouse CI
+        run: pnpm add -g @lhci/cli@0.14.x
+
+      # ── 6. Run LHCI ──────────────────────────────────────────────────────────
+      # autorun: starts the Next.js server, runs audits, uploads results.
+      # Config lives in lighthouserc.js — not inline — so devs can run it locally.
+      - name: Run Lighthouse CI
+        run: lhci autorun
+        env:
+          LHCI_GITHUB_APP_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # ── 7. Assert vitals ─────────────────────────────────────────────────────
+      # LHCI's built-in assertions are too coarse for per-metric thresholds.
+      # Our script reads the JSON reports and fails with precise output.
+      - name: Assert LCP and CLS thresholds
+        run: node scripts/assert-vitals.mjs
+
+      # ── 8. Upload report artifact ─────────────────────────────────────────────
+      # Survives even if step 7 fails — devs can download and inspect locally.
+      - name: Upload Lighthouse reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: lighthouse-reports-${{ github.run_id }}
+          path: .lighthouseci/
+          retention-days: 14
+
+      # ── 9. PR comment ────────────────────────────────────────────────────────
+      # Posts a summary table directly on the PR. No need to dig into artifacts.
+      - name: Post PR comment
+        if: always() && github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const fs = require('fs');
+            const path = require('path');
+
+            // Find all lhr-*.json files in .lighthouseci/
+            const dir = '.lighthouseci';
+            if (!fs.existsSync(dir)) return;
+
+            const reports = fs.readdirSync(dir)
+              .filter(f => f.startsWith('lhr-') && f.endsWith('.json'))
+              .map(f => JSON.parse(fs.readFileSync(path.join(dir, f), 'utf8')));
+
+            if (!reports.length) return;
+
+            // Aggregate median values across all runs for each URL
+            const byUrl = {};
+            for (const r of reports) {
+              const url = r.requestedUrl;
+              if (!byUrl[url]) byUrl[url] = [];
+              byUrl[url].push({
+                lcp: r.audits['largest-contentful-paint']?.numericValue ?? 0,
+                cls: r.audits['cumulative-layout-shift']?.numericValue ?? 0,
+                inp: r.audits['interaction-to-next-paint']?.numericValue ?? 0,
+                score: Math.round((r.categories.performance?.score ?? 0) * 100),
+              });
+            }
+
+            const median = arr => arr.sort((a,b)=>a-b)[Math.floor(arr.length/2)];
+            const fmt = (v, unit) => unit === 'ms' ? `${Math.round(v)}ms` : v.toFixed(3);
+            const icon = (v, good, poor) => v <= good ? '✅' : v >= poor ? '❌' : '⚠️';
+
+            let rows = '';
+            for (const [url, runs] of Object.entries(byUrl)) {
+              const lcp = median(runs.map(r=>r.lcp));
+              const cls = median(runs.map(r=>r.cls));
+              const inp = median(runs.map(r=>r.inp));
+              const score = median(runs.map(r=>r.score));
+              const route = new URL(url).pathname;
+              rows += `| \`${route}\` | ${score} | ${icon(lcp,2500,4000)} ${fmt(lcp,'ms')} | ${icon(cls,0.1,0.25)} ${fmt(cls,'score')} | ${icon(inp,200,500)} ${fmt(inp,'ms')} |\n`;
+            }
+
+            const body = `## Lighthouse CI results
+
+| Route | Score | LCP | CLS | INP |
+|-------|-------|-----|-----|-----|
+${rows}
+**Thresholds:** LCP < 2500ms · CLS < 0.1 · INP < 200ms
+[Download full report](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})`;
+
+            // Update existing comment if it exists, otherwise create new
+            const { data: comments } = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+            });
+
+            const existing = comments.find(c =>
+              c.user.login === 'github-actions[bot]' &&
+              c.body.includes('Lighthouse CI results')
+            );
+
+            if (existing) {
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: existing.id,
+                body,
+              });
+            } else {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body,
+              });
+            }
