@@ -80,7 +80,7 @@ jobs:
       # Pinned Chrome version = reproducible audits across runs.
       # ubuntu-latest ships an outdated Chrome — always install explicitly.
       - name: Install Chrome
-        uses: browser-actions/setup-chrome@v1
+        uses: browser-actions/setup-chrome@v2
         with:
           chrome-version: stable
 
