@@ -47,7 +47,10 @@ export async function POST(req: Request) {
 
   const parsed = checkoutRequestSchema.safeParse(body);
   if (!parsed.success) {
-    const response = NextResponse.json({ error: 'Invalid request', issues: parsed.error.flatten().fieldErrors }, { status: 422 });
+    const response = NextResponse.json(
+      { error: 'Invalid request', issues: parsed.error.flatten().fieldErrors },
+      { status: 422 },
+    );
     response.headers.set('Cache-Control', 'private, no-cache');
     return response;
   }
