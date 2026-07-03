@@ -1,5 +1,5 @@
 'use server';
-import { eq, inArray } from 'drizzle-orm';
+import { inArray } from 'drizzle-orm';
 import { z } from 'zod';
 import { db } from '@/lib/db';
 import { orders, orderItems, products } from '@/lib/db/schema';

@@ -54,12 +54,12 @@ describe('submitOrder', () => {
 
   it('rejects out of stock for missing product', async () => {
     const { db } = await import('@/lib/db');
-    vi.mocked(db.transaction).mockImplementation(async (cb: (tx: any) => Promise<any>) => {
+    vi.mocked(db.transaction).mockImplementation(async cb => {
       return cb({
         select: vi.fn().mockReturnValue({
           from: vi.fn().mockReturnValue({ where: vi.fn().mockResolvedValue([]) }),
         }),
-      });
+      } as never);
     });
 
     const result = await submitOrder(validInput);
@@ -70,12 +70,12 @@ describe('submitOrder', () => {
   it('rejects insufficient stock', async () => {
     const product = createMockProduct({ id: validInput.items[0].productId, stockQuantity: 0 });
     const { db } = await import('@/lib/db');
-    vi.mocked(db.transaction).mockImplementation(async (cb: (tx: any) => Promise<any>) => {
+    vi.mocked(db.transaction).mockImplementation(async cb => {
       return cb({
         select: vi.fn().mockReturnValue({
           from: vi.fn().mockReturnValue({ where: vi.fn().mockResolvedValue([product]) }),
         }),
-      });
+      } as never);
     });
 
     const result = await submitOrder(validInput);
@@ -95,20 +95,20 @@ describe('submitOrder', () => {
     });
     const createdOrder = { id: crypto.randomUUID(), totalCents: 3998 };
 
-    let itemsInserted: any[] = [];
+    let itemsInserted: Record<string, unknown>[] = [];
     const { db } = await import('@/lib/db');
-    vi.mocked(db.transaction).mockImplementation(async (cb: (tx: any) => Promise<any>) => {
+    vi.mocked(db.transaction).mockImplementation(async cb => {
       return cb({
         select: vi.fn().mockReturnValue({
           from: vi.fn().mockReturnValue({ where: vi.fn().mockResolvedValue([product]) }),
         }),
         insert: vi.fn(() => ({
-          values: (vals: any) => {
-            if (Array.isArray(vals)) itemsInserted = vals;
+          values: (vals: unknown) => {
+            if (Array.isArray(vals)) itemsInserted = vals as Record<string, unknown>[];
             return { returning: vi.fn().mockResolvedValue([createdOrder]) };
           },
         })),
-      });
+      } as never);
     });
 
     const result = await submitOrder(validInput);
