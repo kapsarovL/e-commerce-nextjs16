@@ -117,7 +117,7 @@ export function CartSummary() {
                   </span>
                 </div>
 
-                {item.quantity >= item.stockQuantity && <p className="text-xs text-orange-500">Max stock reached</p>}
+                {item.quantity >= item.stockQuantity && <p className="text-xs text-orange-600">Max stock reached</p>}
               </div>
             </li>
           ))}

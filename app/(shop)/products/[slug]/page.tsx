@@ -9,7 +9,9 @@ import Image from 'next/image';
 import type { Metadata } from 'next';
 import { Button } from '@/components/ui/button';
 
-const AddToCartButton = dynamic(() => import('@/components/cart/add-to-cart-button').then(mod => ({ default: mod.AddToCartButton })));
+const AddToCartButton = dynamic(() =>
+  import('@/components/cart/add-to-cart-button').then(mod => ({ default: mod.AddToCartButton })),
+);
 
 export const revalidate = 3600; // Revalidate every hour
 
@@ -60,7 +62,8 @@ export default async function ProductPage({ params }: ProductPageProps) {
               fill
               sizes="(min-width: 768px) 50vw, 100vw"
               className="object-cover"
-              priority
+              preload
+              loading="eager"
               fetchPriority="high"
             />
           ) : (
@@ -84,7 +87,13 @@ export default async function ProductPage({ params }: ProductPageProps) {
 
           {product.description && <p className="text-muted-foreground leading-relaxed">{product.description}</p>}
 
-          <Suspense fallback={<Button disabled className="w-full">Loading...</Button>}>
+          <Suspense
+            fallback={
+              <Button disabled className="w-full">
+                Loading...
+              </Button>
+            }
+          >
             <AddToCartButton
               product={{
                 id: product.id,

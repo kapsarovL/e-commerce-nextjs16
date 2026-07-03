@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach } from 'vitest';
-import { useCartStore } from '../cart';
+import { useCartStore, selectCartItemCount, selectCartSubtotal, selectCartHasItem, selectCartGetItem } from '../cart';
 
 const ITEM = {
   id: 'prod-1',
@@ -95,32 +95,32 @@ describe('clearCart', () => {
 });
 
 describe('derived selectors', () => {
-  it('itemCount sums all quantities', () => {
+  it('selectCartItemCount sums all quantities', () => {
     useCartStore.getState().addItem({ ...ITEM, quantity: 2 });
     useCartStore.getState().addItem({ ...ITEM, id: 'prod-2', slug: 'b', quantity: 3 });
-    expect(useCartStore.getState().itemCount()).toBe(5);
+    expect(selectCartItemCount(useCartStore.getState())).toBe(5);
   });
 
-  it('subtotalCents calculates total price', () => {
+  it('selectCartSubtotal calculates total price', () => {
     useCartStore.getState().addItem({ ...ITEM, priceCents: 1000, quantity: 2 });
-    expect(useCartStore.getState().subtotalCents()).toBe(2000);
+    expect(selectCartSubtotal(useCartStore.getState())).toBe(2000);
   });
 
-  it('hasItem returns true for existing item', () => {
+  it('selectCartHasItem returns true for existing item', () => {
     useCartStore.getState().addItem(ITEM);
-    expect(useCartStore.getState().hasItem('prod-1')).toBe(true);
+    expect(selectCartHasItem('prod-1')(useCartStore.getState())).toBe(true);
   });
 
-  it('hasItem returns false for missing item', () => {
-    expect(useCartStore.getState().hasItem('prod-999')).toBe(false);
+  it('selectCartHasItem returns false for missing item', () => {
+    expect(selectCartHasItem('prod-999')(useCartStore.getState())).toBe(false);
   });
 
-  it('getItem returns the item', () => {
+  it('selectCartGetItem returns the item', () => {
     useCartStore.getState().addItem(ITEM);
-    expect(useCartStore.getState().getItem('prod-1')?.name).toBe('Test Product');
+    expect(selectCartGetItem('prod-1')(useCartStore.getState())?.name).toBe('Test Product');
   });
 
-  it('getItem returns undefined for missing item', () => {
-    expect(useCartStore.getState().getItem('prod-999')).toBeUndefined();
+  it('selectCartGetItem returns undefined for missing item', () => {
+    expect(selectCartGetItem('prod-999')(useCartStore.getState())).toBeUndefined();
   });
 });

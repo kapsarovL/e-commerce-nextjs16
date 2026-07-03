@@ -2,13 +2,12 @@ import Link from 'next/link';
 import Image from 'next/image';
 import type { Metadata } from 'next';
 import { ArrowRight, Package, RotateCcw, Shield, Headphones } from 'lucide-react';
+import { ClerkProvider } from '@clerk/nextjs';
 import { Navbar } from '@/components/layout/navbar';
 import { Footer } from '@/components/layout/footer';
 import { Button } from '@/components/ui/button';
 import { getFeaturedProducts, getCategories } from '@/lib/db/queries';
 import { formatPrice } from '@/lib/utils';
-
-export const dynamic = 'force-dynamic';
 
 export const metadata: Metadata = {
   title: 'StoreFront — Quality goods, delivered fast',
@@ -26,12 +25,12 @@ export default async function HomePage() {
   const [featured, categories] = await Promise.all([getFeaturedProducts(8), getCategories()]);
 
   return (
-    <>
+    <ClerkProvider>
       <Navbar />
 
       <main className="min-h-[calc(100vh-3.5rem)] w-full">
         {/* ── Hero ── */}
-        <section className="from-background to-muted/40 bg-linear-to-b w-full">
+        <section className="from-background to-muted/40 w-full bg-linear-to-b">
           <div className="mx-auto flex w-full max-w-7xl flex-col items-center gap-6 px-4 py-24 text-center md:py-32">
             <span className="bg-primary/10 text-primary rounded-full px-3 py-1 text-xs font-medium tracking-wide uppercase">
               New arrivals every week
@@ -94,7 +93,10 @@ export default async function HomePage() {
                   const imageUrl = (product.images as { url: string }[] | null)?.[0]?.url ?? null;
                   return (
                     <Link key={product.id} href={`/products/${product.slug}`} className="group flex flex-col gap-3">
-                      <div className="bg-muted aspect-square overflow-hidden rounded-2xl" style={{ position: 'relative' }}>
+                      <div
+                        className="bg-muted aspect-square overflow-hidden rounded-2xl"
+                        style={{ position: 'relative' }}
+                      >
                         {imageUrl ? (
                           <Image
                             src={imageUrl}
@@ -102,7 +104,9 @@ export default async function HomePage() {
                             fill
                             sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
                             className="object-cover transition-transform duration-300 group-hover:scale-105"
-                            priority={idx === 0}
+                            preload={idx === 0}
+                            loading={idx === 0 ? 'eager' : 'lazy'}
+                            fetchPriority={idx === 0 ? 'high' : 'auto'}
                           />
                         ) : (
                           <div className="bg-muted h-full w-full" />
@@ -136,7 +140,7 @@ export default async function HomePage() {
 
         {/* ── Categories ── */}
         {categories.length > 0 && (
-          <section className="border-border border-t bg-muted/40 w-full">
+          <section className="border-border bg-muted/40 w-full border-t">
             <div className="mx-auto w-full max-w-7xl px-4 py-16">
               <h2 className="mb-8 text-2xl font-bold tracking-tight">Shop by category</h2>
               <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
@@ -174,6 +178,6 @@ export default async function HomePage() {
       </main>
 
       <Footer />
-    </>
+    </ClerkProvider>
   );
 }
