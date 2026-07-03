@@ -1,0 +1,31 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": ["config:recommended"],
+  "labels": ["dependencies"],
+  "packageRules": [
+    {
+      "matchUpdateTypes": ["minor", "patch"],
+      "automerge": true,
+      "platformAutomerge": true,
+      "groupName": "minor and patch dependencies",
+      "groupSlug": "minor-patch"
+    },
+    {
+      "matchManagers": ["npm"],
+      "matchPackageNames": ["next", "eslint", "typescript"],
+      "enabled": false
+    },
+    {
+      "matchPackageNames": ["undici", "hono", "qs", "js-yaml"],
+      "enabled": false
+    }
+  ],
+  "schedule": ["before 9am on monday"],
+  "lockFileMaintenance": {
+    "enabled": true,
+    "automerge": true,
+    "platformAutomerge": true,
+    "schedule": ["before 9am on monday"]
+  },
+  "platformCommit": true
+}
