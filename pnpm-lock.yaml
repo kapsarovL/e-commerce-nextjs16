@@ -12,6 +12,7 @@ overrides:
   '@hono/node-server': '>=1.19.13'
   postcss: '>=8.5.10'
   ip-address: '>=10.1.1'
+  axios: 0.32.0
 
 importers:
 
@@ -2899,8 +2900,8 @@ packages:
     resolution: {integrity: sha512-BASOg+YwO2C+346x3LZOeoovTIoTrRqEsqMa6fmfAV0P+U9mFr9NsyOEpiYvFjbc64NMrSswhV50WdXzdb/Z5A==}
     engines: {node: '>=4'}
 
-  axios@0.31.1:
-    resolution: {integrity: sha512-Ef8DUZSZQP6igY48mjGaoEjwhely97lserep0IFJifBH4YdKvwH5eMLniy3kig2HQoBNR8EkZpDjowxwTJcmbg==}
+  axios@0.32.0:
+    resolution: {integrity: sha512-sGQArzERW2SI8IRkjuJ5y91Sm9QjiRq4Ay4kOLqpbBt5CeKDNq4g6nirJdyD+palK3yEDXnJiVXsesX66AjwyA==}
 
   axobject-query@4.1.0:
     resolution: {integrity: sha512-qIj0G9wZbMGNLjLmg1PT6v2mE9AH2zlnADJD/2tC6E00hgmhUOfEB6greHPAfLRSufHqROIUTkw6E+M3lH0PTQ==}
@@ -8580,7 +8581,7 @@ snapshots:
 
   axe-core@4.11.1: {}
 
-  axios@0.31.1:
+  axios@0.32.0:
     dependencies:
       follow-redirects: 1.16.0
       form-data: 4.0.5
@@ -8647,7 +8648,7 @@ snapshots:
 
   bundlewatch@0.4.2:
     dependencies:
-      axios: 0.31.1
+      axios: 0.32.0
       bytes: 3.1.2
       chalk: 4.1.2
       ci-env: 1.17.0
