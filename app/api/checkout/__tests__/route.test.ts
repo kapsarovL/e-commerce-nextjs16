@@ -7,7 +7,7 @@ const mockAuth = vi.fn();
 const mockCurrentUser = vi.fn();
 const mockCreateCustomer = vi.fn();
 const mockCreateSession = vi.fn();
-let mockInsertChain: any;
+let mockInsertChain: Record<string, unknown>;
 
 vi.mock('@/lib/db', () => ({
   db: {
@@ -146,9 +146,9 @@ describe('POST /api/checkout', () => {
   });
 
   it('inserts order items with correct product snapshots', async () => {
-    let itemsInserted: any[] = [];
-    const valuesFn = vi.fn((vals: any) => {
-      if (Array.isArray(vals)) itemsInserted = vals;
+    let itemsInserted: Record<string, unknown>[] = [];
+    const valuesFn = vi.fn((vals: unknown) => {
+      if (Array.isArray(vals)) itemsInserted = vals as Record<string, unknown>[];
       return { returning: vi.fn().mockResolvedValue([{ id: 'order-1' }]) };
     });
     mockInsertChain.values = valuesFn;
