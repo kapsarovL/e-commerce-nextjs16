@@ -9,12 +9,20 @@ function generateNonce(): string {
 }
 
 function buildCsp(nonce: string): string {
+  const scriptSrc = [
+    `'nonce-${nonce}'`,
+    "'strict-dynamic'",
+    'https:',
+    // Next.js Turbopack uses eval() for source maps in development
+    ...(process.env.NODE_ENV === 'development' ? ["'unsafe-eval'"] : []),
+  ].join(' ');
+
   return [
     "default-src 'self'",
     // nonce authorizes first-party scripts; strict-dynamic propagates that
     // trust to scripts they load (e.g. GTM loading its own tags).
     // https fallback keeps older browsers from blocking everything.
-    `script-src 'nonce-${nonce}' 'strict-dynamic' https:`,
+    `script-src ${scriptSrc}`,
     // Next.js and Tailwind inject inline styles; unsafe-inline is safe for
     // styles because CSS cannot exfiltrate data the way scripts can.
     "style-src 'self' 'unsafe-inline'",
@@ -23,11 +31,11 @@ function buildCsp(nonce: string): string {
     "connect-src 'self' https://*.clerk.accounts.dev https://clerk.com https://vitals.vercel-insights.com https://www.google-analytics.com https://www.googletagmanager.com",
     "frame-src 'self' https://*.clerk.accounts.dev",
     // Clerk uses blob: web workers internally
-    "worker-src blob:",
+    'worker-src blob:',
     "object-src 'none'",
     "base-uri 'self'",
     "form-action 'self'",
-    "report-uri /api/csp-report",
+    'report-uri /api/csp-report',
   ].join('; ');
 }
 

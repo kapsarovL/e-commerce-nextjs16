@@ -1,5 +1,17 @@
 import { relations } from 'drizzle-orm';
-import { boolean, index, integer, jsonb, pgEnum, pgTable, text, timestamp, uuid, varchar } from 'drizzle-orm/pg-core';
+import {
+  boolean,
+  index,
+  integer,
+  jsonb,
+  pgEnum,
+  pgTable,
+  text,
+  timestamp,
+  uniqueIndex,
+  uuid,
+  varchar,
+} from 'drizzle-orm/pg-core';
 
 // ─────────────────────────────────────────────
 // Enums
@@ -200,3 +212,32 @@ export const orderItemsRelations = relations(orderItems, ({ one }) => ({
   order: one(orders, { fields: [orderItems.orderId], references: [orders.id] }),
   product: one(products, { fields: [orderItems.productId], references: [products.id] }),
 }));
+
+// ─────────────────────────────────────────────
+// Web Vitals — raw SQL helper still uses neon()
+// directly for percentile_cont / mode().
+// Schema defined here so Drizzle tracks it for
+// migrations and Studio.
+// ─────────────────────────────────────────────
+
+export const webVitals = pgTable(
+  'web_vitals',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    name: varchar('name', { length: 20 }).notNull(),
+    value: integer('value').notNull(),
+    rating: varchar('rating', { length: 20 }).notNull(),
+    delta: integer('delta').notNull(),
+    metricId: varchar('metric_id', { length: 255 }).notNull(),
+    navigation: varchar('navigation', { length: 50 }),
+    pathname: text('pathname'),
+    deviceType: varchar('device_type', { length: 20 }),
+    connection: varchar('connection', { length: 50 }),
+    recordedAt: timestamp('recorded_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  t => [
+    uniqueIndex('web_vitals_metric_name_idx').on(t.metricId, t.name),
+    index('web_vitals_recorded_at_idx').on(t.recordedAt),
+    index('web_vitals_pathname_idx').on(t.pathname),
+  ],
+);

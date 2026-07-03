@@ -28,7 +28,7 @@ export function Footer() {
   const year = new Date().getFullYear();
 
   return (
-    <footer className="border-border bg-background border-t w-full">
+    <footer className="border-border bg-background w-full border-t">
       <div className="mx-auto w-full max-w-7xl px-4 py-12">
         <div className="grid grid-cols-2 gap-8 sm:grid-cols-4">
           {/* Brand */}
@@ -47,7 +47,7 @@ export function Footer() {
                   aria-label={label}
                   className="text-muted-foreground hover:text-foreground transition-colors"
                 >
-                  <Icon className="h-4 w-4" />
+                  <Icon className="h-4 w-4" aria-hidden="true" />
                 </a>
               ))}
             </div>

@@ -1,6 +1,5 @@
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
 import { Geist, Geist_Mono } from 'next/font/google';
-import { ClerkProvider } from '@clerk/nextjs';
 import { Analytics } from '@vercel/analytics/next';
 import { VitalsReporter } from '@/components/vitals-reporter';
 import Script from 'next/script';
@@ -28,6 +27,13 @@ export const metadata: Metadata = {
   },
 };
 
+export const viewport: Viewport = {
+  themeColor: [
+    { media: '(prefers-color-scheme: light)', color: '#ffffff' },
+    { media: '(prefers-color-scheme: dark)', color: '#121212' },
+  ],
+};
+
 export default async function RootLayout({
   children,
 }: Readonly<{
@@ -38,14 +44,14 @@ export default async function RootLayout({
   return (
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-        <ClerkProvider>
-          {children}
-          <Script
-            src="https://www.googletagmanager.com/gtag/js?id=G-V6BKVYNHV9"
-            strategy="afterInteractive"
-            nonce={nonce}
-          />
-        </ClerkProvider>
+        <a
+          href="#main-content"
+          className="ring-ring bg-background text-foreground sr-only fixed top-0 left-0 z-[100] m-3 rounded-md px-4 py-2 text-sm font-medium shadow-sm ring-2 outline-none focus:not-sr-only"
+        >
+          Skip to content
+        </a>
+        {children}
+        <Script src="https://www.googletagmanager.com/gtag/js?id=G-V6BKVYNHV9" strategy="lazyOnload" nonce={nonce} />
         <Analytics />
         <VitalsReporter />
       </body>

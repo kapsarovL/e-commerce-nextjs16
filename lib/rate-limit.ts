@@ -3,7 +3,7 @@ import { Redis } from '@upstash/redis';
 
 /** Extract the real client IP from Next.js request headers */
 export function getClientIp(req: Request): string {
-  return req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ?? req.headers.get('x-real-ip') ?? 'unknown';
+  return req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ?? req.headers.get('x-real-ip') ?? '';
 }
 
 function createRedis(): Redis | null {
@@ -30,16 +30,25 @@ const _apiRateLimit = createLimiter(redis, 60, 'rl:api');
 const _searchRateLimit = createLimiter(redis, 30, 'rl:search');
 
 type LimitResult = { success: boolean; limit: number; remaining: number; reset: number };
-const allow: LimitResult = { success: true, limit: 0, remaining: 0, reset: 0 };
+const fallbackResult: LimitResult = { success: true, limit: 0, remaining: 0, reset: 0 };
 
 export const checkoutRateLimit = {
-  limit: (id: string): Promise<LimitResult> => _checkoutRateLimit?.limit(id) ?? Promise.resolve(allow),
+  limit: (id: string): Promise<LimitResult> => {
+    if (!id) return Promise.resolve(fallbackResult);
+    return _checkoutRateLimit?.limit(id) ?? Promise.resolve(fallbackResult);
+  },
 };
 
 export const apiRateLimit = {
-  limit: (id: string): Promise<LimitResult> => _apiRateLimit?.limit(id) ?? Promise.resolve(allow),
+  limit: (id: string): Promise<LimitResult> => {
+    if (!id) return Promise.resolve(fallbackResult);
+    return _apiRateLimit?.limit(id) ?? Promise.resolve(fallbackResult);
+  },
 };
 
 export const searchRateLimit = {
-  limit: (id: string): Promise<LimitResult> => _searchRateLimit?.limit(id) ?? Promise.resolve(allow),
+  limit: (id: string): Promise<LimitResult> => {
+    if (!id) return Promise.resolve(fallbackResult);
+    return _searchRateLimit?.limit(id) ?? Promise.resolve(fallbackResult);
+  },
 };

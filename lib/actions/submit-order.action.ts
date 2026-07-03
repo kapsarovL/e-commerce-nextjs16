@@ -1,5 +1,5 @@
 'use server';
-import { eq } from 'drizzle-orm';
+import { eq, inArray } from 'drizzle-orm';
 import { z } from 'zod';
 import { db } from '@/lib/db';
 import { orders, orderItems, products } from '@/lib/db/schema';
@@ -44,18 +44,21 @@ export async function submitOrder(raw: unknown): Promise<SubmitResult> {
   }
 
   const { address, paymentMethod, items, totalCents } = parsed.data;
+  const productIds = items.map(i => i.productId);
 
   try {
     const order = await db.transaction(async tx => {
+      // Fetch all products in a single query for validation + snapshots
+      const liveProducts = await tx.select().from(products).where(inArray(products.id, productIds));
+      const productMap = new Map(liveProducts.map(p => [p.id, p]));
+
       // Check stock for all items
       for (const item of items) {
-        const product = await tx.select().from(products).where(eq(products.id, item.productId)).limit(1);
-
-        if (!product[0]) {
+        const p = productMap.get(item.productId);
+        if (!p) {
           throw { code: 'OUT_OF_STOCK' as const, productId: item.productId };
         }
-
-        if (product[0].stockQuantity < item.quantity) {
+        if (p.stockQuantity < item.quantity) {
           throw { code: 'OUT_OF_STOCK' as const, productId: item.productId };
         }
       }
@@ -79,17 +82,21 @@ export async function submitOrder(raw: unknown): Promise<SubmitResult> {
 
       if (!newOrder[0]) throw new Error('Failed to create order');
 
-      // Create order items
+      // Create order items with product snapshots
       await tx.insert(orderItems).values(
-        items.map(item => ({
-          orderId: newOrder[0].id,
-          productId: item.productId,
-          productName: '', // Will be populated from product query
-          productSlug: '',
-          quantity: item.quantity,
-          unitPriceCents: 0,
-          totalCents: 0,
-        })),
+        items.map(item => {
+          const p = productMap.get(item.productId)!;
+          return {
+            orderId: newOrder[0].id,
+            productId: item.productId,
+            productName: p.name,
+            productSlug: p.slug,
+            productImageUrl: p.images?.[0]?.url ?? null,
+            quantity: item.quantity,
+            unitPriceCents: p.priceCents,
+            totalCents: p.priceCents * item.quantity,
+          };
+        }),
       );
 
       return newOrder[0];

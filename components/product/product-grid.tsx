@@ -20,16 +20,16 @@ export function ProductGrid({ products }: ProductGridProps) {
 
   return (
     <ul className="grid grid-cols-2 gap-4 lg:grid-cols-3 xl:grid-cols-4">
-      {products.map(product => (
+      {products.map((product, index) => (
         <li key={product.id}>
-          <ProductCard product={product} />
+          <ProductCard product={product} index={index} />
         </li>
       ))}
     </ul>
   );
 }
 
-function ProductCard({ product }: { product: Product }) {
+function ProductCard({ product, index }: { product: Product; index: number }) {
   const images = product.images as { url: string; alt?: string }[] | null;
   const primaryImage = Array.isArray(images) ? images[0] : null;
   const imageUrl = primaryImage?.url ?? null;
@@ -42,13 +42,16 @@ function ProductCard({ product }: { product: Product }) {
     <div className="border-border bg-card group flex flex-col overflow-hidden rounded-xl border transition-shadow hover:shadow-md">
       {/* Image */}
       <div className="bg-muted aspect-square overflow-hidden" style={{ position: 'relative' }}>
-        <Link href={`/products/${product.slug}`} className="block h-full w-full">
+        <Link href={`/products/${product.slug}`} className="relative block h-full w-full">
           {primaryImage ? (
             <Image
               src={primaryImage.url}
               alt={primaryImage.alt || product.name}
               fill
               sizes="(min-width: 1280px) 25vw, (min-width: 1024px) 33vw, 50vw"
+              preload={index < 4}
+              loading={index < 4 ? 'eager' : 'lazy'}
+              fetchPriority={index < 4 ? 'high' : 'auto'}
               className="object-cover transition-transform duration-300 group-hover:scale-105"
             />
           ) : (
@@ -67,7 +70,7 @@ function ProductCard({ product }: { product: Product }) {
             </span>
           )}
           {isLowStock && !isOnSale && (
-            <span className="rounded bg-orange-500 px-2 py-0.5 text-xs font-medium text-white">Low stock</span>
+            <span className="rounded bg-orange-600 px-2 py-0.5 text-xs font-medium text-white">Low stock</span>
           )}
         </div>
 

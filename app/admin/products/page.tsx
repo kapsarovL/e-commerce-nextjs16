@@ -67,7 +67,7 @@ export default async function AdminProductsPage() {
                           product.stockQuantity === 0
                             ? 'text-destructive'
                             : product.stockQuantity <= product.lowStockThreshold
-                              ? 'text-orange-500'
+                              ? 'text-orange-600'
                               : 'text-foreground'
                         }`}
                       >

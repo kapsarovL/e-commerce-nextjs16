@@ -1,4 +1,4 @@
-// app/(shop)/products/loading.tsx
+// Root loading fallback for all pages
 import { ProductGridSkeleton } from '@/components/product/product-grid';
 
 export default function Loading() {

@@ -1,6 +1,12 @@
 import { describe, it, expect, beforeEach } from 'vitest';
 import { act } from '@testing-library/react';
-import { useCartStore } from '@/store/cart';
+import {
+  useCartStore,
+  selectCartItemCount,
+  selectCartSubtotal,
+  selectCartHasItem,
+  selectCartGetItem,
+} from '@/store/cart';
 import { createMockCartItem } from '@/lib/__tests__/test-utils';
 
 describe('Cart Store Integration', () => {
@@ -182,7 +188,7 @@ describe('Cart Store Integration', () => {
         useCartStore.getState().addItem({ ...item2, quantity: 3 });
       });
 
-      const count = useCartStore.getState().itemCount();
+      const count = selectCartItemCount(useCartStore.getState());
       expect(count).toBe(5);
     });
 
@@ -195,7 +201,7 @@ describe('Cart Store Integration', () => {
         useCartStore.getState().addItem({ ...item2, quantity: 1 });
       });
 
-      const subtotal = useCartStore.getState().subtotalCents();
+      const subtotal = selectCartSubtotal(useCartStore.getState());
       expect(subtotal).toBe(4000); // (1000 * 2) + (2000 * 1)
     });
 
@@ -206,8 +212,8 @@ describe('Cart Store Integration', () => {
         useCartStore.getState().addItem(item);
       });
 
-      expect(useCartStore.getState().hasItem('prod-1')).toBe(true);
-      expect(useCartStore.getState().hasItem('prod-2')).toBe(false);
+      expect(selectCartHasItem('prod-1')(useCartStore.getState())).toBe(true);
+      expect(selectCartHasItem('prod-2')(useCartStore.getState())).toBe(false);
     });
 
     it('retrieves item by id', () => {
@@ -217,9 +223,9 @@ describe('Cart Store Integration', () => {
         useCartStore.getState().addItem(item);
       });
 
-      const cartItem = useCartStore.getState().getItem('prod-1');
+      const cartItem = selectCartGetItem('prod-1')(useCartStore.getState());
       expect(cartItem?.name).toBe('Test Product');
-      expect(useCartStore.getState().getItem('nonexistent')).toBeUndefined();
+      expect(selectCartGetItem('nonexistent')(useCartStore.getState())).toBeUndefined();
     });
   });
 
@@ -238,8 +244,8 @@ describe('Cart Store Integration', () => {
 
       const state = useCartStore.getState();
       expect(state.items).toHaveLength(2);
-      expect(state.itemCount()).toBe(5); // 3 + 2
-      expect(state.subtotalCents()).toBe(7000); // (1000 * 3) + (2000 * 2)
+      expect(selectCartItemCount(state)).toBe(5); // 3 + 2
+      expect(selectCartSubtotal(state)).toBe(7000); // (1000 * 3) + (2000 * 2)
     });
 
     it('persists state across selectors', () => {
@@ -250,9 +256,9 @@ describe('Cart Store Integration', () => {
       });
 
       const state = useCartStore.getState();
-      expect(state.itemCount()).toBe(2);
-      expect(state.subtotalCents()).toBe(3998);
-      expect(state.hasItem('prod-1')).toBe(true);
+      expect(selectCartItemCount(state)).toBe(2);
+      expect(selectCartSubtotal(state)).toBe(3998);
+      expect(selectCartHasItem('prod-1')(state)).toBe(true);
     });
   });
 });
