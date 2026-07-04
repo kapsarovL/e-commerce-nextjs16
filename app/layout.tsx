@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from 'next';
 import { Geist, Geist_Mono } from 'next/font/google';
+import { headers } from 'next/headers';
 import { Analytics } from '@vercel/analytics/next';
 import { VitalsReporter } from '@/components/vitals-reporter';
 import Script from 'next/script';
@@ -33,11 +34,13 @@ export const viewport: Viewport = {
   ],
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const nonce = (await headers()).get('x-nonce') ?? '';
+
   return (
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
@@ -48,7 +51,7 @@ export default function RootLayout({
           Skip to content
         </a>
         {children}
-        <Script src="https://www.googletagmanager.com/gtag/js?id=G-V6BKVYNHV9" strategy="lazyOnload" />
+        <Script src="https://www.googletagmanager.com/gtag/js?id=G-V6BKVYNHV9" strategy="lazyOnload" nonce={nonce} />
         <Analytics />
         <VitalsReporter />
       </body>
