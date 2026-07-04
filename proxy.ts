@@ -39,14 +39,20 @@ function buildCsp(nonce: string): string {
   ].join('; ');
 }
 
-const clerkHandler = clerkMiddleware((_auth, req: NextRequest) => {
-  const nonce = generateNonce();
-  const response = NextResponse.next();
-  response.headers.set('Content-Security-Policy-Report-Only', buildCsp(nonce));
+function setCsp(response: NextResponse): NextResponse {
+  response.headers.set('Content-Security-Policy-Report-Only', buildCsp(generateNonce()));
   return response;
+}
+
+const clerkHandler = clerkMiddleware((_auth, req: NextRequest) => {
+  return setCsp(NextResponse.next());
 });
 
 export function proxy(request: NextRequest, event: NextFetchEvent): ReturnType<typeof clerkHandler> {
+  // Home page gets CSP but no Clerk auth — avoids loading Clerk JS on initial visit
+  if (request.nextUrl.pathname === '/') {
+    return setCsp(NextResponse.next());
+  }
   return clerkHandler(request, event);
 }
 
