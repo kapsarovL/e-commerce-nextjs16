@@ -1,12 +1,11 @@
 import Link from 'next/link';
-import { Suspense } from 'react';
 import type { Metadata } from 'next';
 import { ArrowRight, Package, RotateCcw, Shield, Headphones } from 'lucide-react';
 import { ClerkProvider } from '@clerk/nextjs';
 import { Navbar } from '@/components/layout/navbar';
 import { Footer } from '@/components/layout/footer';
 import { Button } from '@/components/ui/button';
-import { Skeleton } from '@/components/ui/skeleton';
+import { getFeaturedProducts, getCategories } from '@/lib/db/queries';
 import { FeaturedProducts } from '@/components/home/featured-products';
 import { CategoriesSection } from '@/components/home/categories-section';
 
@@ -22,7 +21,9 @@ const perks = [
   { icon: Headphones, label: '24/7 support', description: "We're always here" },
 ];
 
-export default function HomePage() {
+export default async function HomePage() {
+  const [featured, categories] = await Promise.all([getFeaturedProducts(8), getCategories()]);
+
   return (
     <ClerkProvider>
       <Navbar />
@@ -74,44 +75,10 @@ export default function HomePage() {
         </section>
 
         {/* ── Featured products ── */}
-        <Suspense
-          fallback={
-            <section className="w-full">
-              <div className="mx-auto w-full max-w-7xl px-4 py-16">
-                <div className="mb-8 h-8 w-32 animate-pulse rounded bg-gray-200" />
-                <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
-                  {Array.from({ length: 4 }).map((_, i) => (
-                    <div key={i} className="flex flex-col gap-3">
-                      <Skeleton className="aspect-square rounded-2xl" />
-                      <Skeleton className="h-4 w-3/4 rounded" />
-                      <Skeleton className="h-4 w-1/2 rounded" />
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </section>
-          }
-        >
-          <FeaturedProducts />
-        </Suspense>
+        <FeaturedProducts featured={featured} />
 
         {/* ── Categories ── */}
-        <Suspense
-          fallback={
-            <section className="border-border bg-muted/40 w-full border-t">
-              <div className="mx-auto w-full max-w-7xl px-4 py-16">
-                <div className="mb-8 h-8 w-48 animate-pulse rounded bg-gray-200" />
-                <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
-                  {Array.from({ length: 4 }).map((_, i) => (
-                    <Skeleton key={i} className="h-24 rounded-2xl" />
-                  ))}
-                </div>
-              </div>
-            </section>
-          }
-        >
-          <CategoriesSection />
-        </Suspense>
+        <CategoriesSection categories={categories} />
 
         {/* ── CTA banner ── */}
         <section className="w-full">
