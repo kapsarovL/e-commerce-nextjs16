@@ -22,13 +22,13 @@ function buildCsp(nonce: string): string {
     // nonce authorizes first-party scripts; strict-dynamic propagates that
     // trust to scripts they load (e.g. GTM loading its own tags).
     // https fallback keeps older browsers from blocking everything.
-    `script-src ${scriptSrc}`,
+    `script-src ${scriptSrc} https://*.clerk.accounts.dev`,
     // Next.js and Tailwind inject inline styles; unsafe-inline is safe for
     // styles because CSS cannot exfiltrate data the way scripts can.
     "style-src 'self' 'unsafe-inline'",
     "img-src 'self' data: blob: https://images.unsplash.com https://img.clerk.com",
     "font-src 'self'",
-    "connect-src 'self' https://*.clerk.accounts.dev https://clerk.com https://vitals.vercel-insights.com https://www.google-analytics.com https://www.googletagmanager.com",
+    "connect-src 'self' https://*.clerk.accounts.dev https://clerk.com https://clerk-telemetry.com https://vitals.vercel-insights.com https://www.google-analytics.com https://www.googletagmanager.com",
     "frame-src 'self' https://*.clerk.accounts.dev",
     // Clerk uses blob: web workers internally
     'worker-src blob:',
