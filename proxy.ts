@@ -41,16 +41,8 @@ function buildCsp(nonce: string): string {
 
 const clerkHandler = clerkMiddleware((_auth, req: NextRequest) => {
   const nonce = generateNonce();
-
-  const requestHeaders = new Headers(req.headers);
-  requestHeaders.set('x-nonce', nonce);
-
-  const response = NextResponse.next({
-    request: { headers: requestHeaders },
-  });
-
+  const response = NextResponse.next();
   response.headers.set('Content-Security-Policy-Report-Only', buildCsp(nonce));
-
   return response;
 });
 

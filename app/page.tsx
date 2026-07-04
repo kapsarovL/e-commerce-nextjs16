@@ -1,8 +1,7 @@
 import Link from 'next/link';
 import type { Metadata } from 'next';
 import { ArrowRight, Package, RotateCcw, Shield, Headphones } from 'lucide-react';
-import { ClerkProvider } from '@clerk/nextjs';
-import { Navbar } from '@/components/layout/navbar';
+import { NavbarPublic } from '@/components/layout/navbar-public';
 import { Footer } from '@/components/layout/footer';
 import { Button } from '@/components/ui/button';
 import { getFeaturedProducts, getCategories } from '@/lib/db/queries';
@@ -25,8 +24,8 @@ export default async function HomePage() {
   const [featured, categories] = await Promise.all([getFeaturedProducts(8), getCategories()]);
 
   return (
-    <ClerkProvider>
-      <Navbar />
+    <>
+      <NavbarPublic />
 
       <main className="min-h-[calc(100vh-3.5rem)] w-full">
         {/* ── Hero ── */}
@@ -99,6 +98,6 @@ export default async function HomePage() {
       </main>
 
       <Footer />
-    </ClerkProvider>
+    </>
   );
 }
