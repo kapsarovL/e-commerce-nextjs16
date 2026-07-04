@@ -32,7 +32,7 @@ export function NavbarPublic() {
           </Link>
 
           <div className="hidden max-w-md flex-1 sm:block">
-            <Suspense>
+            <Suspense fallback={<div className="h-9" />}>
               <SearchBar />
             </Suspense>
           </div>
@@ -63,7 +63,7 @@ export function NavbarPublic() {
         </nav>
 
         <div className="border-border border-t px-4 py-2 sm:hidden">
-          <Suspense>
+          <Suspense fallback={<div className="h-9" />}>
             <SearchBar />
           </Suspense>
         </div>

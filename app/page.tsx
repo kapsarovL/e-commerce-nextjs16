@@ -27,7 +27,7 @@ export default async function HomePage() {
     <>
       <NavbarPublic />
 
-      <main className="min-h-[calc(100vh-3.5rem)] w-full">
+      <main className="min-h-dvh w-full">
         {/* ── Hero ── */}
         <section className="from-background to-muted/40 w-full bg-linear-to-b">
           <div className="mx-auto flex w-full max-w-7xl flex-col items-center gap-6 px-4 py-24 text-center md:py-32">
