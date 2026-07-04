@@ -4,9 +4,7 @@ import { ArrowRight } from 'lucide-react';
 import { getFeaturedProducts } from '@/lib/db/queries';
 import { formatPrice } from '@/lib/utils';
 
-export async function FeaturedProducts() {
-  const featured = await getFeaturedProducts(8);
-
+export function FeaturedProducts({ featured }: { featured: Awaited<ReturnType<typeof getFeaturedProducts>> }) {
   if (featured.length === 0) return null;
 
   return (

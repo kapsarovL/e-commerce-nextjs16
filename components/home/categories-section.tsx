@@ -1,9 +1,7 @@
 import Link from 'next/link';
 import { getCategories } from '@/lib/db/queries';
 
-export async function CategoriesSection() {
-  const categories = await getCategories();
-
+export function CategoriesSection({ categories }: { categories: Awaited<ReturnType<typeof getCategories>> }) {
   if (categories.length === 0) return null;
 
   return (
