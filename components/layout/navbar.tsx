@@ -62,10 +62,10 @@ export function Navbar() {
               )}
             </Button>
 
-            {/* Auth */}
-            {isLoaded && (
-              <>
-                {isSignedIn ? (
+            {/* Auth - reserve space to prevent CLS */}
+            <div className="flex items-center">
+              {isLoaded ? (
+                isSignedIn ? (
                   <UserButton />
                 ) : (
                   <SignInButton mode="modal">
@@ -73,9 +73,11 @@ export function Navbar() {
                       Sign In
                     </Button>
                   </SignInButton>
-                )}
-              </>
-            )}
+                )
+              ) : (
+                <div className="h-8 w-[68px]" aria-hidden="true" />
+              )}
+            </div>
           </div>
         </nav>
 
