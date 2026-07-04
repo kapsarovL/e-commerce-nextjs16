@@ -75,7 +75,7 @@ export function Navbar() {
                   </SignInButton>
                 )
               ) : (
-                <div className="h-8 w-[68px]" aria-hidden="true" />
+                <div className="h-7 w-[68px]" aria-hidden="true" />
               )}
             </div>
           </div>
