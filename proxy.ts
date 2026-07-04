@@ -44,7 +44,7 @@ function setCsp(response: NextResponse): NextResponse {
   return response;
 }
 
-const clerkHandler = clerkMiddleware((_auth, req: NextRequest) => {
+const clerkHandler = clerkMiddleware(() => {
   return setCsp(NextResponse.next());
 });
 
