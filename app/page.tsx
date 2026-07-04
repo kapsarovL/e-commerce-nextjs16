@@ -1,13 +1,14 @@
 import Link from 'next/link';
-import Image from 'next/image';
+import { Suspense } from 'react';
 import type { Metadata } from 'next';
 import { ArrowRight, Package, RotateCcw, Shield, Headphones } from 'lucide-react';
 import { ClerkProvider } from '@clerk/nextjs';
 import { Navbar } from '@/components/layout/navbar';
 import { Footer } from '@/components/layout/footer';
 import { Button } from '@/components/ui/button';
-import { getFeaturedProducts, getCategories } from '@/lib/db/queries';
-import { formatPrice } from '@/lib/utils';
+import { Skeleton } from '@/components/ui/skeleton';
+import { FeaturedProducts } from '@/components/home/featured-products';
+import { CategoriesSection } from '@/components/home/categories-section';
 
 export const metadata: Metadata = {
   title: 'StoreFront — Quality goods, delivered fast',
@@ -21,9 +22,7 @@ const perks = [
   { icon: Headphones, label: '24/7 support', description: "We're always here" },
 ];
 
-export default async function HomePage() {
-  const [featured, categories] = await Promise.all([getFeaturedProducts(8), getCategories()]);
-
+export default function HomePage() {
   return (
     <ClerkProvider>
       <Navbar />
@@ -75,89 +74,44 @@ export default async function HomePage() {
         </section>
 
         {/* ── Featured products ── */}
-        {featured.length > 0 && (
-          <section className="w-full">
-            <div className="mx-auto w-full max-w-7xl px-4 py-16">
-              <div className="mb-8 flex items-baseline justify-between">
-                <h2 className="text-2xl font-bold tracking-tight">Featured</h2>
-                <Link
-                  href="/products?featured=true"
-                  className="text-primary hover:text-primary/80 flex items-center gap-1 text-sm font-medium transition-colors"
-                >
-                  View all <ArrowRight className="h-3.5 w-3.5" />
-                </Link>
+        <Suspense
+          fallback={
+            <section className="w-full">
+              <div className="mx-auto w-full max-w-7xl px-4 py-16">
+                <div className="mb-8 h-8 w-32 animate-pulse rounded bg-gray-200" />
+                <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
+                  {Array.from({ length: 4 }).map((_, i) => (
+                    <div key={i} className="flex flex-col gap-3">
+                      <Skeleton className="aspect-square rounded-2xl" />
+                      <Skeleton className="h-4 w-3/4 rounded" />
+                      <Skeleton className="h-4 w-1/2 rounded" />
+                    </div>
+                  ))}
+                </div>
               </div>
-
-              <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
-                {featured.map((product, idx) => {
-                  const imageUrl = (product.images as { url: string }[] | null)?.[0]?.url ?? null;
-                  return (
-                    <Link key={product.id} href={`/products/${product.slug}`} className="group flex flex-col gap-3">
-                      <div
-                        className="bg-muted aspect-square overflow-hidden rounded-2xl"
-                        style={{ position: 'relative' }}
-                      >
-                        {imageUrl ? (
-                          <Image
-                            src={imageUrl}
-                            alt={product.name}
-                            fill
-                            sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
-                            className="object-cover transition-transform duration-300 group-hover:scale-105"
-                            preload={idx === 0}
-                            loading={idx === 0 ? 'eager' : 'lazy'}
-                            fetchPriority={idx === 0 ? 'high' : 'auto'}
-                          />
-                        ) : (
-                          <div className="bg-muted h-full w-full" />
-                        )}
-                        {product.comparePriceCents && product.comparePriceCents > product.priceCents && (
-                          <span className="bg-destructive text-destructive-foreground absolute top-2 left-2 rounded-full px-2 py-0.5 text-[10px] font-semibold">
-                            Sale
-                          </span>
-                        )}
-                      </div>
-                      <div>
-                        <p className="text-foreground line-clamp-2 text-sm font-medium group-hover:underline">
-                          {product.name}
-                        </p>
-                        <div className="mt-1 flex items-baseline gap-2">
-                          <span className="text-sm font-semibold tabular-nums">{formatPrice(product.priceCents)}</span>
-                          {product.comparePriceCents && product.comparePriceCents > product.priceCents && (
-                            <span className="text-muted-foreground text-xs tabular-nums line-through">
-                              {formatPrice(product.comparePriceCents)}
-                            </span>
-                          )}
-                        </div>
-                      </div>
-                    </Link>
-                  );
-                })}
-              </div>
-            </div>
-          </section>
-        )}
+            </section>
+          }
+        >
+          <FeaturedProducts />
+        </Suspense>
 
         {/* ── Categories ── */}
-        {categories.length > 0 && (
-          <section className="border-border bg-muted/40 w-full border-t">
-            <div className="mx-auto w-full max-w-7xl px-4 py-16">
-              <h2 className="mb-8 text-2xl font-bold tracking-tight">Shop by category</h2>
-              <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
-                {categories.map(cat => (
-                  <Link
-                    key={cat.id}
-                    href={`/products?category=${cat.slug}`}
-                    className="border-border bg-background hover:border-primary/50 hover:bg-primary/5 group flex flex-col gap-1 rounded-2xl border p-5 transition-colors"
-                  >
-                    <p className="text-foreground font-medium group-hover:underline">{cat.name}</p>
-                    {cat.description && <p className="text-muted-foreground line-clamp-2 text-xs">{cat.description}</p>}
-                  </Link>
-                ))}
+        <Suspense
+          fallback={
+            <section className="border-border bg-muted/40 w-full border-t">
+              <div className="mx-auto w-full max-w-7xl px-4 py-16">
+                <div className="mb-8 h-8 w-48 animate-pulse rounded bg-gray-200" />
+                <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
+                  {Array.from({ length: 4 }).map((_, i) => (
+                    <Skeleton key={i} className="h-24 rounded-2xl" />
+                  ))}
+                </div>
               </div>
-            </div>
-          </section>
-        )}
+            </section>
+          }
+        >
+          <CategoriesSection />
+        </Suspense>
 
         {/* ── CTA banner ── */}
         <section className="w-full">
