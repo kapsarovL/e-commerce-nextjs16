@@ -1,7 +1,7 @@
 import type { MetadataRoute } from 'next';
 
 export default function robots(): MetadataRoute.Robots {
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'https://yourdomain.com';
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL?.replace(/\/$/, '') || 'https://storefront-ec-app.vercel.app';
 
   return {
     rules: [
@@ -11,6 +11,6 @@ export default function robots(): MetadataRoute.Robots {
         disallow: ['/api/', '/admin/', '/account/', '/checkout/', '/cart'],
       },
     ],
-    sitemap: `${appUrl.replace(/\/$/, '')}/sitemap.xml`,
+    sitemap: `${appUrl}/sitemap.xml`,
   };
 }
