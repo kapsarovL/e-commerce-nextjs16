@@ -35,9 +35,7 @@ export async function FeaturedProducts() {
                       fill
                       sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
                       className="object-cover transition-transform duration-300 group-hover:scale-105"
-                      preload={idx === 0}
-                      loading={idx === 0 ? 'eager' : 'lazy'}
-                      fetchPriority={idx === 0 ? 'high' : 'auto'}
+                      loading="lazy"
                     />
                   ) : (
                     <div className="bg-muted h-full w-full" />
