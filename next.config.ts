@@ -6,6 +6,16 @@ const withBundleAnalyzer = bundleAnalyzer({
 });
 
 const nextConfig: NextConfig = {
+  async redirects() {
+    return [
+      {
+        source: '/:path*',
+        has: [{ type: 'host', value: 'storefront-ec-app.vercel.app' }],
+        destination: 'https://storefront-ec.vercel.app/:path*',
+        permanent: true,
+      },
+    ];
+  },
   async headers() {
     return [
       // ── Hashed JS/CSS chunks ────────────────────────────────────────────────
