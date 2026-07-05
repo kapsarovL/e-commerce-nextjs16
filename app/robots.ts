@@ -1,7 +1,13 @@
+import { headers } from 'next/headers';
 import type { MetadataRoute } from 'next';
 
-export default function robots(): MetadataRoute.Robots {
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL?.replace(/\/$/, '') || 'https://storefront-ec-app.vercel.app';
+export const dynamic = 'force-dynamic';
+
+export default async function robots(): Promise<MetadataRoute.Robots> {
+  const headersList = await headers();
+  const host = headersList.get('host') || 'storefront-ec-app.vercel.app';
+  const protocol = headersList.get('x-forwarded-proto') || 'https';
+  const appUrl = `${protocol}://${host}`;
 
   return {
     rules: [
