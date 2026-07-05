@@ -1,3 +1,4 @@
+import { headers } from 'next/headers';
 import type { MetadataRoute } from 'next';
 import { db } from '@/lib/db';
 import { products } from '@/lib/db/schema';
@@ -6,7 +7,10 @@ import { eq } from 'drizzle-orm';
 export const dynamic = 'force-dynamic';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL?.replace(/\/$/, '') || 'https://storefront-ec-app.vercel.app';
+  const headersList = await headers();
+  const host = headersList.get('host') || 'storefront-ec-app.vercel.app';
+  const protocol = headersList.get('x-forwarded-proto') || 'https';
+  const appUrl = `${protocol}://${host}`;
 
   const staticRoutes: MetadataRoute.Sitemap = [
     { url: appUrl, lastModified: new Date(), changeFrequency: 'daily', priority: 1 },
