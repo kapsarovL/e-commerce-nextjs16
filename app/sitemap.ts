@@ -6,7 +6,7 @@ import { eq } from 'drizzle-orm';
 export const dynamic = 'force-dynamic';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'https://yourdomain.com';
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL?.replace(/\/$/, '') || 'https://storefront-ec-app.vercel.app';
 
   const staticRoutes: MetadataRoute.Sitemap = [
     { url: appUrl, lastModified: new Date(), changeFrequency: 'daily', priority: 1 },
