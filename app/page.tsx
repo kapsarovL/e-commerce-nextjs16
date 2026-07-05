@@ -1,12 +1,14 @@
+import { Suspense } from 'react';
 import Link from 'next/link';
 import type { Metadata } from 'next';
 import { ArrowRight, Package, RotateCcw, Shield, Headphones } from 'lucide-react';
 import { NavbarPublic } from '@/components/layout/navbar-public';
 import { Footer } from '@/components/layout/footer';
 import { Button } from '@/components/ui/button';
-import { getFeaturedProducts, getCategories } from '@/lib/db/queries';
 import { FeaturedProducts } from '@/components/home/featured-products';
 import { CategoriesSection } from '@/components/home/categories-section';
+import { FeaturedProductsSkeleton } from '@/components/home/featured-products-skeleton';
+import { CategoriesSectionSkeleton } from '@/components/home/categories-section-skeleton';
 
 export const metadata: Metadata = {
   title: 'StoreFront — Quality goods, delivered fast',
@@ -20,9 +22,7 @@ const perks = [
   { icon: Headphones, label: '24/7 support', description: "We're always here" },
 ];
 
-export default async function HomePage() {
-  const [featured, categories] = await Promise.all([getFeaturedProducts(8), getCategories()]);
-
+export default function HomePage() {
   return (
     <>
       <NavbarPublic />
@@ -73,11 +73,15 @@ export default async function HomePage() {
           </div>
         </section>
 
-        {/* ── Featured products ── */}
-        <FeaturedProducts featured={featured} />
+        {/* ── Featured products (streamed) ── */}
+        <Suspense fallback={<FeaturedProductsSkeleton />}>
+          <FeaturedProducts />
+        </Suspense>
 
-        {/* ── Categories ── */}
-        <CategoriesSection categories={categories} />
+        {/* ── Categories (streamed) ── */}
+        <Suspense fallback={<CategoriesSectionSkeleton />}>
+          <CategoriesSection />
+        </Suspense>
 
         {/* ── CTA banner ── */}
         <section className="w-full">
