@@ -22,7 +22,7 @@ export const metadata: Metadata = {
   title: 'StoreFront',
   description: 'A modern e-commerce storefront',
   verification: {
-    google: 'VmFVHs6YjGTlqrU7jKsAQ_X54my9O6t1WAAI-A8lAp4',
+    google: ['VmFVHs6YjGTlqrU7jKsAQ_X54my9O6t1WAAI-A8lAp4', 'tTsgaPYqJcPUdJWUFYl6hZufQpIn1VhrHZSB_xY06m8'],
   },
 };
 
