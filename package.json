@@ -33,7 +33,7 @@
     "prepare": "node --eval \"if (!process.env.CI) require('node:child_process').execSync('husky', {stdio:'inherit'});\""
   },
   "dependencies": {
-    "@clerk/nextjs": "^7.5.12",
+    "@clerk/nextjs": "^7.5.17",
     "@neondatabase/serverless": "^1.1.0",
     "@uploadthing/react": "^7.3.3",
     "@upstash/ratelimit": "^2.0.8",
@@ -49,7 +49,7 @@
     "lucide-react": "^0.577.0",
     "next": "16.2.10",
     "next-themes": "^0.4.6",
-    "radix-ui": "^1.6.1",
+    "radix-ui": "^1.6.2",
     "react": "19.2.7",
     "react-dom": "19.2.7",
     "react-error-boundary": "6.1.2",
@@ -85,7 +85,7 @@
     "@types/react-dom": "^19",
     "@typescript-eslint/eslint-plugin": "^8.57.2",
     "@vitejs/plugin-react": "^6.0.3",
-    "@vitest/coverage-v8": "^4.1.9",
+    "@vitest/coverage-v8": "^4.1.10",
     "babel-plugin-react-compiler": "^19.1.0-rc.3",
     "bundlewatch": "^0.4.2",
     "drizzle-kit": "^0.31.10",
@@ -97,17 +97,17 @@
     "globals": "^17.7.0",
     "husky": "^9.1.7",
     "jsdom": "^28.1.0",
-    "prettier": "3.9.4",
+    "prettier": "3.9.5",
     "prettier-plugin-tailwindcss": "^0.8.0",
     "shadcn": "^4.1.2",
     "sharp": "^0.34.5",
     "size-limit": "^12.1.0",
     "tailwindcss": "^4.3.2",
-    "tsx": "^4.23.0",
+    "tsx": "^4.23.1",
     "typescript": "^5",
     "typescript-eslint": "^8.62.1",
     "vite": "^8.0.8",
-    "vitest": "^4.1.9"
+    "vitest": "^4.1.10"
   },
   "pnpm": {
     "overrides": {
