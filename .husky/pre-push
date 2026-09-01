@@ -1,0 +1,9 @@
+#!/usr/bin/env sh
+
+# gitleaks on the pushed range (delegates to the global pre-push hook).
+# stdin (the ref specs) is passed through via exec.
+if [ -x "$HOME/.config/git/hooks/pre-push" ]; then
+  exec "$HOME/.config/git/hooks/pre-push"
+fi
+echo "husky: ~/.config/git/hooks/pre-push not found — push scan skipped" >&2
+exit 0

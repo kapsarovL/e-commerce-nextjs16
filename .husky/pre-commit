@@ -1,1 +1,13 @@
+#!/usr/bin/env sh
+
+# Security checks first (gitleaks on staged files, zero-width/bidi block,
+# osv-scanner report on changed dependency manifests). These normally come
+# from the global hooks (~/.config/git/hooks), but husky overrides
+# core.hooksPath here, so we delegate explicitly.
+if [ -x "$HOME/.config/git/hooks/pre-commit" ]; then
+  "$HOME/.config/git/hooks/pre-commit" || { c=$?; echo "husky: security scan blocked the commit (code $c)" >&2; exit "$c"; }
+else
+  echo "husky: ~/.config/git/hooks/pre-commit not found — security scan skipped" >&2
+fi
+
 pnpm test
