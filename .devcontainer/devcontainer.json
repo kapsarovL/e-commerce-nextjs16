@@ -1,0 +1,43 @@
+{
+  "name": "hardened-devcontainer-f44",
+  "build": {
+    "context": ".",
+    "dockerfile": "Containerfile",
+    "args": {
+      "USERNAME": "developer",
+      "USER_UID": "1000",
+      "USER_GID": "1000"
+    }
+  },
+  "runArgs": [
+    "--userns=keep-id",
+    "--cap-drop=ALL",
+    "--cap-add=NET_BIND_SERVICE",
+    "--security-opt=no-new-privileges",
+    "--read-only",
+    "--tmpfs=/tmp:rw,noexec,nosuid,size=1g",
+    "--network=private",
+    "--pids-limit=2048"
+  ],
+  "containerUser": "developer",
+  "remoteUser": "developer",
+  "mounts": [
+    {
+      "source": "devcontainer-home",
+      "target": "/home/developer",
+      "type": "volume"
+    }
+  ],
+  "workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
+  "customizations": {
+    "vscode": {
+      "settings": {
+        "terminal.integrated.allowWorkspaceConfiguration": false
+      },
+      "extensions": [
+        "ms-azuretools.vscode-docker"
+      ]
+    }
+  },
+  "onCreateCommand": "bash /workspaces/${localWorkspaceFolderBasename}/.devcontainer/scripts/ensure-container-config.sh && bash /workspaces/${localWorkspaceFolderBasename}/.devcontainer/scripts/install-optional-tools.sh"
+}

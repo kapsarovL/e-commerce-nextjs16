@@ -1,0 +1,51 @@
+FROM fedora:44
+
+LABEL org.opencontainers.image.title="hardened-devcontainer-f44" \
+      org.opencontainers.image.description="Hardened Fedora 44 devcontainer with rootless supply-chain tooling" \
+      org.opencontainers.image.licenses="MIT"
+
+ARG USERNAME=developer
+ARG USER_UID=1000
+ARG USER_GID=1000
+
+ENV LANG=C.UTF-8 \
+    LC_ALL=C.UTF-8 \
+    PIP_DISABLE_PIP_VERSION_CHECK=1 \
+    PATH="/usr/local/bin:/home/${USERNAME}/.local/bin:${PATH}"
+
+RUN groupadd --gid "${USER_GID}" "${USERNAME}" \
+ && useradd --uid "${USER_UID}" --gid "${USER_GID}" --create-home --shell /bin/bash "${USERNAME}"
+
+RUN dnf install -y --setopt=install_weak_deps=False --setopt=tsflags=nodocs \
+      git-core curl wget ca-certificates tar gzip \
+      podman skopeo buildah trivy age \
+ && dnf clean all \
+ && rm -rf /var/cache/dnf /var/cache/libdnf5
+
+ARG COSIGN_VERSION=v3.1.3
+ARG SOPS_VERSION=v3.13.3
+RUN curl -sSfL -o /usr/local/bin/cosign \
+      "https://github.com/sigstore/cosign/releases/download/${COSIGN_VERSION}/cosign-linux-amd64" \
+ && curl -sSfL -o /usr/local/bin/sops \
+      "https://github.com/getsops/sops/releases/download/${SOPS_VERSION}/sops-v${SOPS_VERSION#v}.linux.amd64" \
+ && chmod 0755 /usr/local/bin/cosign /usr/local/bin/sops
+
+ARG NODE_VERSION=24.20.0
+RUN set -eux; \
+    base="https://nodejs.org/dist/v${NODE_VERSION}"; \
+    curl -sSfL -o "/tmp/node-v${NODE_VERSION}-linux-x64.tar.xz" "${base}/node-v${NODE_VERSION}-linux-x64.tar.xz"; \
+    curl -sSfL -o /tmp/SHASUMS256.txt "${base}/SHASUMS256.txt"; \
+    (cd /tmp && grep -F "node-v${NODE_VERSION}-linux-x64.tar.xz" SHASUMS256.txt | sha256sum --check --status -); \
+    tar --strip-components=1 -xJf "/tmp/node-v${NODE_VERSION}-linux-x64.tar.xz" -C /usr/local; \
+    rm -f /tmp/SHASUMS256.txt "/tmp/node-v${NODE_VERSION}-linux-x64.tar.xz"; \
+    corepack enable; \
+    corepack prepare yarn@stable --activate
+
+RUN mkdir -p /home/${USERNAME}/.local/bin \
+ && mkdir -p /home/${USERNAME}/.config/containers \
+ && chown -R ${USER_UID}:${USER_GID} /home/${USERNAME}/.local /home/${USERNAME}/.config \
+ && mkdir -p /workspaces \
+ && chown ${USER_UID}:${USER_GID} /workspaces
+
+USER ${USERNAME}
+WORKDIR /workspaces
