@@ -1,0 +1,8 @@
+# Historical placeholder Stripe TEST keys (sk_test_placeholder) in deleted v1 workflows
+# (commit 8f232e9e5, .github/workflows/ci-*.yml) - not real secrets; baselined 2026-09-06
+8f232e9e5876afc4f4a78ec2d3279a991add54e0:.github/workflows/ci-deploy.yml:stripe-access-token:40
+8f232e9e5876afc4f4a78ec2d3279a991add54e0:.github/workflows/ci-deploy.yml:stripe-access-token:41
+8f232e9e5876afc4f4a78ec2d3279a991add54e0:.github/workflows/ci-preview.yml:stripe-access-token:34
+8f232e9e5876afc4f4a78ec2d3279a991add54e0:.github/workflows/ci-preview.yml:stripe-access-token:35
+8f232e9e5876afc4f4a78ec2d3279a991add54e0:.github/workflows/ci-test.yml:stripe-access-token:58
+8f232e9e5876afc4f4a78ec2d3279a991add54e0:.github/workflows/ci-test.yml:stripe-access-token:59
